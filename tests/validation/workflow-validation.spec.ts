@@ -165,3 +165,62 @@ describe('Workflow validation', () => {
     );
   });
 });
+
+describe('Workflow validation - recursive lifecycle hooks', () => {
+  const document = {
+    dsl: schemaVersion,
+    name: 'test',
+    version: '1.0.0',
+    namespace: 'default',
+  };
+
+  it('should throw on duplicate top-level task names via validate(Workflow, ...)', () => {
+    const workflow = new Classes.Workflow({
+      document,
+      do: [{ step1: { set: { foo: 'bar' } } }, { step1: { set: { foo: 'baz' } } }],
+    });
+    const test = () => validate('Workflow', workflow);
+    expect(test).toThrow(Error);
+    expect(test).toThrow(/'TaskList' is invalid - The following task names are duplicated: step1/);
+  });
+
+  it('should throw on duplicate top-level task names via workflow.validate()', () => {
+    const workflow = new Classes.Workflow({
+      document,
+      do: [{ step1: { set: { foo: 'bar' } } }, { step1: { set: { foo: 'baz' } } }],
+    });
+    expect(() => workflow.validate()).toThrow(/'TaskList' is invalid - The following task names are duplicated: step1/);
+  });
+
+  it('should throw on duplicate task names nested within a do task', () => {
+    const workflow = new Classes.Workflow({
+      document,
+      do: [
+        {
+          outer: {
+            do: [{ dup: { set: { foo: 'bar' } } }, { dup: { set: { foo: 'baz' } } }],
+          },
+        },
+      ],
+    });
+    const test = () => validate('Workflow', workflow);
+    expect(test).toThrow(Error);
+    expect(test).toThrow(/'TaskList' is invalid - The following task names are duplicated: dup/);
+  });
+
+  it('should not throw when all task names are unique, including nested', () => {
+    const workflow = new Classes.Workflow({
+      document,
+      do: [
+        { step1: { set: { foo: 'bar' } } },
+        {
+          step2: {
+            do: [{ inner1: { set: { foo: 'bar' } } }, { inner2: { set: { foo: 'baz' } } }],
+          },
+        },
+      ],
+    });
+    expect(() => validate('Workflow', workflow)).not.toThrow();
+    expect(() => workflow.validate()).not.toThrow();
+  });
+});

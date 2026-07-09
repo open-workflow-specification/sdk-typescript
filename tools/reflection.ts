@@ -55,6 +55,22 @@ type HydrationResult = {
 };
 
 /**
+ * Describes a hydratable child reference of a type, used to drive recursive validation.
+ * Each variant mirrors a case handled by `getObjectHydration`/`getArrayHydration`.
+ */
+export type ChildType =
+  /** `self.X = new _T(model.X)` — a single nested typed value at property `X` */
+  | { kind: 'object'; property: string; type: string }
+  /** `self.X = Object.fromEntries(...new _T(v))` — a record `{ [k]: T }` at property `X` */
+  | { kind: 'record'; property: string; type: string }
+  /** the object itself carries an index signature `{ [k]: T }` (minus `knownProperties`) */
+  | { kind: 'indexed'; type: string; knownProperties: string[] }
+  /** the node itself is `T[]` (e.g. `TaskList`) */
+  | { kind: 'array'; type: string }
+  /** the node itself is `Array<{ [k]: T }>` */
+  | { kind: 'array-record'; type: string };
+
+/**
  * Get the exported declarations of the provided TypeScript code
  * @param tsSource The TypeScript code to parse
  * @returns An array containing the name of the exported declarations
@@ -304,4 +320,64 @@ export function getArrayHydration(type: Type): HydrationResult {
     imports,
     code,
   };
+}
+
+/**
+ * Produces the list of hydratable child references for the provided type.
+ * Mirrors `getObjectHydration`/`getArrayHydration` (reusing the same helpers), but returns
+ * structured navigation descriptors instead of code, so the emitted validation metadata
+ * stays in lockstep with the constructor hydration.
+ * @param node The node containing the type
+ * @param type The type to get the child references from
+ * @returns The list of child references
+ */
+export function getChildTypes(node: Node, type: Type): ChildType[] {
+  if (type.isArray() || type.isTuple()) {
+    const arrayType = type.getArrayElementType() ?? getUnderlyingTypes(type)[0];
+    if (!arrayType || isValueType(arrayType)) {
+      return [];
+    }
+    if (!arrayType.isAnonymous()) {
+      return [{ kind: 'array', type: getTypeName(arrayType) }];
+    }
+    return [{ kind: 'array-record', type: getTypeName(arrayType.getStringIndexType()!) }];
+  }
+  const properties = getProperties(node, type);
+  const hydratableProperties = getHydratableProperties(node, type, properties);
+  const constantProperties = getConstantProperties(node, properties);
+  const duplicateConstantProperties = getDuplicateValues(constantProperties.map((p) => p.name));
+  const constantNames = constantProperties
+    .filter((prop) => !duplicateConstantProperties.includes(prop.name))
+    .map((prop) => prop.name);
+  let namedProperties = hydratableProperties.filter((prop) => !!prop.name);
+  // A property can appear on several members of a union type (e.g. `do` on both DoTask and
+  // ForTask). `getObjectHydration` drops all such duplicates to avoid emitting duplicate code
+  // lines, but recursion only needs a single navigable descriptor. So we keep one entry when
+  // every occurrence resolves to the same type, and drop the property only when the types
+  // genuinely conflict (we couldn't pick one). This lets validation recurse into nested `do`
+  // blocks even though the generic `Task` constructor does not hydrate them into `TaskList`.
+  const typesByName = new Map<string, Set<string>>();
+  for (const prop of namedProperties) {
+    if (!typesByName.has(prop.name)) {
+      typesByName.set(prop.name, new Set());
+    }
+    typesByName.get(prop.name)!.add(prop.type);
+  }
+  namedProperties = namedProperties
+    .filter((prop) => typesByName.get(prop.name)!.size === 1)
+    .filter((prop, index, arr) => arr.findIndex((p) => p.name === prop.name) === index);
+  const children: ChildType[] = namedProperties.map((prop) =>
+    prop.isAnonymous
+      ? { kind: 'record', property: prop.name, type: prop.type }
+      : { kind: 'object', property: prop.name, type: prop.type },
+  );
+  const indexedProperty = hydratableProperties.find((p) => !p.name);
+  if (indexedProperty && !indexedProperty.isAnonymous) {
+    children.push({
+      kind: 'indexed',
+      type: indexedProperty.type,
+      knownProperties: [...constantNames, ...namedProperties.map((p) => p.name)],
+    });
+  }
+  return children;
 }

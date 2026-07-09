@@ -18,8 +18,8 @@
 import Ajv, { ValidateFunction } from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';
 import workflowSchema from './generated/schema/workflow.json';
-import { validationPointers } from './generated/validation';
-import { deepCopy } from './utils';
+import { ChildType, childTypes, validationPointers } from './generated/validation';
+import { deepCopy, isObject } from './utils';
 import { getLifecycleHooks } from './lifecycle-hooks';
 import { Specification } from './generated/definitions';
 
@@ -42,14 +42,13 @@ const validators: Map<string, ValidateFunction> = new Map<string, ValidateFuncti
 );
 
 /**
- * Validates the provided data or throws an error
+ * Runs the JSON schema validation for a single type, throwing a formatted error if invalid.
+ * The schema is structurally recursive (AJV walks the whole subtree via `$ref`s), so this only
+ * needs to run once, at the root of a `validate` call.
  * @param typeName The data type to validate
  * @param data The data to validate
- * @param workflow A workflow instance, used for DSL level validation
- * @returns Throws if invalid
  */
-export const validate = <T>(typeName: string, data: T, workflow?: Partial<Specification.Workflow>) => {
-  getLifecycleHooks(typeName)?.preValidation?.(data, workflow);
+const validateSchema = <T>(typeName: string, data: T): void => {
   const validateFn: ValidateFunction | undefined = validators.get(typeName);
   if (!validateFn) {
     throw new Error(`Unable to find a validation function for '${typeName}'`);
@@ -63,5 +62,74 @@ ${validateFn.errors?.reduce((acc, error) => acc + `- ${error.instancePath} | ${e
 data: ${JSON.stringify(data, null, 4)}`,
     );
   }
-  getLifecycleHooks(typeName)?.postValidation?.(data, workflow);
+};
+
+/**
+ * Resolves the nested node(s) to recurse into for the provided child descriptor.
+ * Navigation is driven by the generated metadata (property names), so it works on both hydrated
+ * class instances and plain objects/arrays.
+ * @param node The parent node
+ * @param child The child reference descriptor
+ * @returns The nested node(s) to validate
+ */
+const resolveChildren = (node: unknown, child: ChildType): unknown[] => {
+  switch (child.kind) {
+    case 'object':
+      return [(node as Record<string, unknown>)?.[child.property]];
+    case 'record': {
+      const record = (node as Record<string, unknown>)?.[child.property];
+      return isObject(record) ? Object.values(record) : [];
+    }
+    case 'indexed':
+      return isObject(node)
+        ? Object.entries(node)
+            .filter(([key]) => !child.knownProperties.includes(key))
+            .map(([, value]) => value)
+        : [];
+    case 'array':
+      return Array.isArray(node) ? node : [];
+    case 'array-record':
+      return Array.isArray(node) ? node.flatMap((item) => (isObject(item) ? Object.values(item) : [])) : [];
+    default:
+      return [];
+  }
+};
+
+/**
+ * Recursively invokes the lifecycle validation hooks of the provided node's descendants.
+ * The schema is validated once at the root, so descendants only run their hooks here.
+ * @param typeName The type name of the current node
+ * @param node The current node
+ * @param workflow The root workflow, passed to every hook as DSL-level validation context
+ */
+const validateDescendants = (typeName: string, node: unknown, workflow: Partial<Specification.Workflow>): void => {
+  for (const child of childTypes[typeName] ?? []) {
+    for (const childNode of resolveChildren(node, child)) {
+      if (childNode == null) {
+        continue;
+      }
+      const hooks = getLifecycleHooks(child.type);
+      hooks?.preValidation?.(childNode, workflow);
+      hooks?.postValidation?.(childNode, workflow);
+      validateDescendants(child.type, childNode, workflow);
+    }
+  }
+};
+
+/**
+ * Validates the provided data or throws an error.
+ * Runs the JSON schema validation for `typeName` (which structurally validates the whole subtree),
+ * then recursively invokes the lifecycle hooks of every nested type, passing the root workflow as
+ * DSL-level validation context.
+ * @param typeName The data type to validate
+ * @param data The data to validate
+ * @param workflow A workflow instance, used for DSL level validation. Defaults to `data`, i.e. the root of the validation
+ * @returns Throws if invalid
+ */
+export const validate = <T>(typeName: string, data: T, workflow?: Partial<Specification.Workflow>) => {
+  const root = workflow ?? (data as unknown as Partial<Specification.Workflow>);
+  getLifecycleHooks(typeName)?.preValidation?.(data, root);
+  validateSchema(typeName, data);
+  getLifecycleHooks(typeName)?.postValidation?.(data, root);
+  validateDescendants(typeName, data, root);
 };

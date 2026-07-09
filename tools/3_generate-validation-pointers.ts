@@ -19,7 +19,7 @@ import * as path from 'path';
 import { fileHeader, inFileDisclaimer } from './consts';
 import { definitionsDir, isObject, reset, schemaDir, vallidationDir } from './utils';
 import { JSONSchema } from 'json-schema-to-typescript';
-import { getExportedDeclarations } from './reflection';
+import { getChildTypes, getExportedDeclarations } from './reflection';
 import * as yaml from 'js-yaml';
 
 const { writeFile, readFile } = fsPromises;
@@ -64,7 +64,8 @@ function getJsonPointer(schema: JSONSchema, title: string, parentPointer: string
 async function generate(schemaFile: string, definitionFile: string, destFile: string): Promise<void> {
   const definitions = await readFile(definitionFile, { encoding: 'utf-8' });
   const schemaTxt = await readFile(schemaFile, { encoding: 'utf-8' });
-  const declarations = Array.from(getExportedDeclarations(definitions).keys())
+  const exportedDeclarations = getExportedDeclarations(definitions);
+  const declarations = Array.from(exportedDeclarations.keys())
     .filter((name) => name !== 'Workflow')
     .sort((a, b) => a.localeCompare(b));
   const schema = yaml.load(schemaTxt) as JSONSchema;
@@ -83,12 +84,40 @@ export const validationPointers = {
 ${jsonPointers.reduce((src, [key, value]) => `${src}  ${key}: ${value ? `'${value}'` : 'undefined'},\n`, '')}
 };
   `;
+  const childEntries = Array.from(exportedDeclarations.entries())
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([alias, node]) => [alias, getChildTypes(node![0], node![0].getType())] as const)
+    .filter(([, children]) => children.length > 0);
+  const validationChildrenSrc = `${fileHeader}
+${inFileDisclaimer}
+
+/**
+ * Describes a hydratable child reference of a type, used to drive recursive validation.
+ */
+export type ChildType =
+  | { kind: 'object'; property: string; type: string }
+  | { kind: 'record'; property: string; type: string }
+  | { kind: 'indexed'; type: string; knownProperties: string[] }
+  | { kind: 'array'; type: string }
+  | { kind: 'array-record'; type: string };
+
+/**
+ * A map of type names and the typed children they hydrate, used to recurse validation hooks
+ * into nested objects. Mirrors the constructor hydration of each generated class.
+ */
+export const childTypes: Record<string, ChildType[]> = {
+${childEntries.reduce((src, [key, children]) => `${src}  ${key}: ${JSON.stringify(children)},\n`, '')}
+};
+  `;
   const destDir = path.dirname(destFile);
   await reset(destDir);
   await writeFile(destFile, validationPointersSrc);
+  await writeFile(path.resolve(destDir, 'validation-children.ts'), validationChildrenSrc);
   await writeFile(
     path.resolve(destDir, 'index.ts'),
-    fileHeader + "export { validationPointers } from './validation-pointers';",
+    fileHeader +
+      "export { validationPointers } from './validation-pointers';\n" +
+      "export { childTypes, type ChildType } from './validation-children';\n",
   );
 }
 

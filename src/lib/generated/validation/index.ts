@@ -15,3 +15,4 @@
  */
 
 export { validationPointers } from './validation-pointers';
+export { childTypes, type ChildType } from './validation-children';

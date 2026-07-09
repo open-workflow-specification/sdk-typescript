@@ -64,34 +64,4 @@ describe('TaskList validation', () => {
     expect(test).toThrow(Error);
     expect(test).toThrow(/'TaskList' is invalid - The following task names are duplicated: step1/);
   });
-
-  it('should throw on duplicate task names', () => {
-    const workflow = new Classes.Workflow({
-      document: {
-        dsl: schemaVersion,
-        name: 'test',
-        version: '1.0.0',
-        namespace: 'default',
-      },
-      do: [
-        {
-          step1: {
-            set: {
-              foo: 'bar',
-            },
-          },
-        },
-        {
-          step1: {
-            set: {
-              foo: 'bar',
-            },
-          },
-        },
-      ],
-    });
-    const test = () => validate('TaskList', workflow.do);
-    expect(test).toThrow(Error);
-    expect(test).toThrow(/'TaskList' is invalid - The following task names are duplicated: step1/);
-  });
 });

@@ -16,7 +16,7 @@
  */
 
 import { Specification } from './generated/definitions';
-import { WorkflowHooks } from './hooks';
+import { TaskListHooks, WorkflowHooks } from './hooks';
 
 /**
  * Represents the possible lifecycle hooks of an instance
@@ -72,3 +72,4 @@ export const getLifecycleHooks = (typeName: string): LifecycleHooks<any> | undef
 };
 
 registerHooks('Workflow', WorkflowHooks);
+registerHooks('TaskList', TaskListHooks);

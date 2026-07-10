@@ -62,6 +62,6 @@ describe('TaskList validation', () => {
     ]);
     const test = () => validate('TaskList', taskList);
     expect(test).toThrow(Error);
-    expect(test).toThrow(/'TaskList' is invalid - The following task names are duplicated: step1/);
+    expect(test).toThrow(/'TaskList' is invalid - The following task names are duplicated: 'step1'/);
   });
 });

@@ -18,14 +18,20 @@ import { LifecycleHooks } from '../lifecycle-hooks';
 import { Specification } from '../generated/definitions';
 
 export const TaskListHooks = {
-  postValidation(instance) {
-    const taskNames = instance.flatMap((taskItem) => Object.keys(taskItem));
-    const duplicateTaskNames = taskNames.filter((taskName, index) => taskNames.indexOf(taskName) !== index);
-    if (duplicateTaskNames.length > 0) {
-      throw new Error(
-        `'TaskList' is invalid - The following task names are duplicated: ${duplicateTaskNames.join(', ')}.`,
-      );
+  postValidation(instance): void {
+    const seenNames = new Set<string>();
+    const nameDuplicates = new Set<string>();
+    for (const taskItem of instance) {
+      const taskName = Object.keys(taskItem)[0]!; // Schema already constrains TaskItem with minProperties: 1 / maxProperties: 1
+      if (seenNames.has(taskName)) {
+        nameDuplicates.add(taskName);
+      } else {
+        seenNames.add(taskName);
+      }
     }
-    return;
+    if (nameDuplicates.size > 0) {
+      const names = [...nameDuplicates].map((name) => `'${name}'`).join(', ');
+      throw new Error(`'TaskList' is invalid - The following task names are duplicated: ${names}.`);
+    }
   },
 } as LifecycleHooks<Specification.TaskList>;

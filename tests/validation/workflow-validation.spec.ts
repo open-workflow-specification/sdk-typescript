@@ -181,7 +181,7 @@ describe('Workflow validation - recursive lifecycle hooks', () => {
     });
     const test = () => validate('Workflow', workflow);
     expect(test).toThrow(Error);
-    expect(test).toThrow(/'TaskList' is invalid - The following task names are duplicated: step1/);
+    expect(test).toThrow(/'TaskList' is invalid - The following task names are duplicated: 'step1'/);
   });
 
   it('should throw on duplicate top-level task names via workflow.validate()', () => {
@@ -189,7 +189,9 @@ describe('Workflow validation - recursive lifecycle hooks', () => {
       document,
       do: [{ step1: { set: { foo: 'bar' } } }, { step1: { set: { foo: 'baz' } } }],
     });
-    expect(() => workflow.validate()).toThrow(/'TaskList' is invalid - The following task names are duplicated: step1/);
+    expect(() => workflow.validate()).toThrow(
+      /'TaskList' is invalid - The following task names are duplicated: 'step1'/,
+    );
   });
 
   it('should throw on duplicate task names nested within a do task', () => {
@@ -205,7 +207,7 @@ describe('Workflow validation - recursive lifecycle hooks', () => {
     });
     const test = () => validate('Workflow', workflow);
     expect(test).toThrow(Error);
-    expect(test).toThrow(/'TaskList' is invalid - The following task names are duplicated: dup/);
+    expect(test).toThrow(/'TaskList' is invalid - The following task names are duplicated: 'dup'/);
   });
 
   it('should not throw when all task names are unique, including nested', () => {

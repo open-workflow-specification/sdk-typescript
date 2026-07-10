@@ -17,6 +17,7 @@
 
 import { Classes } from '../../src/lib/generated/classes';
 import { validate } from '../../src/lib/validation';
+import { DslValidationError, WorkflowValidationError } from '../../src/lib/errors';
 
 import { schemaVersion } from '../../package.json';
 
@@ -63,5 +64,19 @@ describe('TaskList validation', () => {
     const test = () => validate('TaskList', taskList);
     expect(test).toThrow(Error);
     expect(test).toThrow(/'TaskList' is invalid - The following task names are duplicated: 'step1'/);
+  });
+
+  it('should throw a DslValidationError rooted at the task list on duplicate task names', () => {
+    const taskList = new Classes.TaskList([{ step1: { set: { foo: 'bar' } } }, { step1: { set: { foo: 'baz' } } }]);
+    let error: unknown;
+    try {
+      validate('TaskList', taskList);
+    } catch (e) {
+      error = e;
+    }
+    expect(error).toBeInstanceOf(WorkflowValidationError);
+    expect(error).toBeInstanceOf(DslValidationError);
+    expect((error as DslValidationError).path).toBe('');
+    expect((error as DslValidationError).typeName).toBe('TaskList');
   });
 });

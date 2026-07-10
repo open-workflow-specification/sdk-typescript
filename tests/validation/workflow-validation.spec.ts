@@ -17,8 +17,21 @@
 
 import { Classes } from '../../src/lib/generated/classes';
 import { validate } from '../../src/lib/validation';
+import { DslValidationError, SchemaValidationError, WorkflowValidationError } from '../../src/lib/errors';
 
 import { schemaVersion, supportedDslVersions } from '../../package.json';
+
+/**
+ * Runs `fn`, expecting it to throw, and returns the thrown value.
+ */
+const captureError = (fn: () => void): unknown => {
+  try {
+    fn();
+  } catch (error) {
+    return error;
+  }
+  throw new Error('Expected the function to throw, but it did not.');
+};
 
 describe('Workflow validation', () => {
   it('should be valid', () => {
@@ -224,5 +237,64 @@ describe('Workflow validation - recursive lifecycle hooks', () => {
     });
     expect(() => validate('Workflow', workflow)).not.toThrow();
     expect(() => workflow.validate()).not.toThrow();
+  });
+});
+
+describe('Workflow validation - WorkflowValidationError', () => {
+  const document = {
+    dsl: schemaVersion,
+    name: 'test',
+    version: '1.0.0',
+    namespace: 'default',
+  };
+
+  it('should throw a DslValidationError locating a top-level duplicate task name', () => {
+    const workflow = new Classes.Workflow({
+      document,
+      do: [{ step1: { set: { foo: 'bar' } } }, { step1: { set: { foo: 'baz' } } }],
+    });
+    const error = captureError(() => validate('Workflow', workflow));
+    expect(error).toBeInstanceOf(WorkflowValidationError);
+    expect(error).toBeInstanceOf(DslValidationError);
+    expect((error as DslValidationError).path).toBe('/do');
+    expect((error as DslValidationError).typeName).toBe('TaskList');
+    expect((error as DslValidationError).cause).toBeInstanceOf(Error);
+  });
+
+  it('should throw a DslValidationError locating a nested duplicate task name', () => {
+    const workflow = new Classes.Workflow({
+      document,
+      do: [
+        {
+          outer: {
+            do: [{ dup: { set: { foo: 'bar' } } }, { dup: { set: { foo: 'baz' } } }],
+          },
+        },
+      ],
+    });
+    const error = captureError(() => validate('Workflow', workflow));
+    expect(error).toBeInstanceOf(DslValidationError);
+    expect((error as DslValidationError).path).toBe('/do/0/outer/do');
+    expect((error as DslValidationError).typeName).toBe('TaskList');
+  });
+
+  it('should throw a DslValidationError at the root for an unsupported DSL version', () => {
+    const workflow = new Classes.Workflow({
+      document: { ...document, dsl: '0.9.0' },
+    });
+    const error = captureError(() => validate('Workflow', workflow));
+    expect(error).toBeInstanceOf(DslValidationError);
+    expect((error as DslValidationError).path).toBe('');
+    expect((error as DslValidationError).typeName).toBe('Workflow');
+  });
+
+  it('should throw a SchemaValidationError carrying the AJV errors for a structural failure', () => {
+    const workflow = new Classes.Workflow({ document });
+    const error = captureError(() => validate('Workflow', workflow));
+    expect(error).toBeInstanceOf(WorkflowValidationError);
+    expect(error).toBeInstanceOf(SchemaValidationError);
+    expect((error as SchemaValidationError).typeName).toBe('Workflow');
+    expect(Array.isArray((error as SchemaValidationError).schemaErrors)).toBe(true);
+    expect((error as SchemaValidationError).schemaErrors.length).toBeGreaterThan(0);
   });
 });

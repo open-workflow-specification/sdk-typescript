@@ -209,7 +209,7 @@ ${inFileDisclaimer}
   const schemaText = await readFile(srcFile, { encoding: 'utf-8' });
   let schema = prepareSchema(yaml.load(schemaText));
   await writeFile(
-    srcFile.replace('workflow', '__internal_workflow').replace('.yaml', '.json'),
+    path.join(path.dirname(srcFile), '__internal_workflow.json'),
     JSON.stringify(schema, null, 2).replace('workflow.yaml', 'workflow.json'),
   );
   schema = mutateSchema(schema);

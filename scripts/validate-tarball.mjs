@@ -11,7 +11,7 @@ import { createRequire } from 'node:module';
 import vm from 'node:vm';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { gunzipSync as unzip } from 'node:zlib';
-import ts from 'typescript';
+import { execSync } from 'node:child_process';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(__dirname, '..');
@@ -132,39 +132,20 @@ const extractTarball = (archivePath, destinationDir) => {
 };
 
 /**
- * Formats TypeScript diagnostics using the temporary consumer directory as the
- * current working context to make smoke-test failures readable.
- */
-const formatDiagnostics = (diagnostics) =>
-  ts.formatDiagnosticsWithColorAndContext(diagnostics, {
-    getCanonicalFileName: (fileName) => fileName,
-    getCurrentDirectory: () => consumerDir,
-    getNewLine: () => '\n',
-  });
-
-/**
- * Compiles the temporary consumer TypeScript program with `noEmit` to verify
- * the published declaration files work in a realistic NodeNext setup.
+ * Type-checks the temporary consumer project with the native `tsc` (`--noEmit`)
+ * to verify the published declaration files work in a realistic NodeNext setup.
+ *
+ * TypeScript 7.0 dropped the programmatic compiler API, so this shells out to the
+ * `tsc` binary installed in the workspace instead of using `ts.createProgram`.
  */
 const verifyTypeSmoke = (tsconfigPath) => {
-  const configFile = ts.readConfigFile(tsconfigPath, ts.sys.readFile);
-  if (configFile.error) {
-    throw new Error(formatDiagnostics([configFile.error]));
-  }
-
-  const parsedConfig = ts.parseJsonConfigFileContent(configFile.config, ts.sys, path.dirname(tsconfigPath));
-  if (parsedConfig.errors.length > 0) {
-    throw new Error(formatDiagnostics(parsedConfig.errors));
-  }
-
-  const program = ts.createProgram({
-    rootNames: parsedConfig.fileNames,
-    options: parsedConfig.options,
-  });
-  const diagnostics = ts.getPreEmitDiagnostics(program);
-
-  if (diagnostics.length > 0) {
-    throw new Error(formatDiagnostics(diagnostics));
+  try {
+    execSync(`npx --no-install tsc --noEmit --project "${tsconfigPath}"`, {
+      cwd: consumerDir,
+      stdio: 'inherit',
+    });
+  } catch {
+    throw new Error(`Type smoke-test failed: tsc reported errors for '${tsconfigPath}'.`);
   }
 };
 

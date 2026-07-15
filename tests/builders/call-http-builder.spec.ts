@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-Present The Serverless Workflow Specification Authors
+ * Copyright 2021-Present The Open Workflow Specification Authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ import { Classes } from '../../src/lib/generated/classes';
 
 describe('CallHTTP builder', () => {
   it('should build with fluent api', () => {
-    const endpoint = 'https://serverlessworkflow.io';
+    const endpoint = 'https://open-workflow-specification.org';
     const method = 'get';
     const callHttp = callHTTPBuilder()
       .with({
@@ -36,7 +36,7 @@ describe('CallHTTP builder', () => {
   });
 
   it('should build with input', () => {
-    const endpoint = 'https://serverlessworkflow.io';
+    const endpoint = 'https://open-workflow-specification.org';
     const method = 'get';
     const data = {
       with: {

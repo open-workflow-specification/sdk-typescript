@@ -1,9 +1,9 @@
 {
-  "name": "@serverlessworkflow/sdk",
-  "version": "1.0.3-alpha3",
+  "name": "@openworkflowspec/sdk",
+  "version": "1.0.3-alpha4",
   "schemaVersion": "1.0.3",
   "supportedDslVersions": ">=1.0.0 <=1.0.3",
-  "description": "Typescript SDK for Serverless Workflow Specification",
+  "description": "Typescript SDK for Open Workflow Specification",
   "type": "commonjs",
   "main": "./index.cjs",
   "module": "./index.mjs",
@@ -107,17 +107,17 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/serverlessworkflow/sdk-typescript.git"
+    "url": "git+https://github.com/open-workflow-specification/sdk-typescript.git"
   },
   "author": {
-    "name": "Serverless Workflow Contributors",
-    "url": "https://serverlessworkflow.io"
+    "name": "Open Workflow Specification Contributors",
+    "url": "https://open-workflow-specification.org"
   },
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/serverlessworkflow/sdk-typescript/issues"
+    "url": "https://github.com/open-workflow-specification/sdk-typescript/issues"
   },
-  "homepage": "https://serverlessworkflow.io",
+  "homepage": "https://open-workflow-specification.org",
   "engines": {
     "node": ">=22.0.0",
     "npm": ">=10.0.0"

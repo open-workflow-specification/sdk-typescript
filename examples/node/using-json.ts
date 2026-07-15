@@ -1,4 +1,4 @@
-import { Classes } from /*'@serverlessworkflow/sdk';*/ '../../dist';
+import { Classes } from /*'@openworkflowspec/sdk';*/ '../../dist';
 
 const myJsonWorkflow = `
 {

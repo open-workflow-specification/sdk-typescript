@@ -1,1 +1,1 @@
-export * from './serverless-workflow-sdk';
+export * from './open-workflow-sdk';

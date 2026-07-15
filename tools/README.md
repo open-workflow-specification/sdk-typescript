@@ -2,7 +2,7 @@
 
 ## 1. Downloader
 
-A simple script that downloads the JSON Schema(s) from `https://serverlessworkflow.io/`. Currently, there is only one schema, but the script supports downloading referenced schemas as well for legacy reasons. As it might be useful in the future and doesn't add much complexity, it has been retained.
+A simple script that downloads the JSON Schema(s) from `https://open-workflow-specification.org/`. Currently, there is only one schema, but the script supports downloading referenced schemas as well for legacy reasons. As it might be useful in the future and doesn't add much complexity, it has been retained.
 
 > [!TIP]
 > The schema(s) are saved in `src/lib/generated/schema/`, the main one being `workflow.json`.\*

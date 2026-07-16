@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-Present The Serverless Workflow Specification Authors
+ * Copyright 2021-Present The Open Workflow Specification Authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -441,7 +441,7 @@ export type UseSecrets = string[];
 export type WorkflowTimeout = Timeout | string;
 
 /**
- * Serverless Workflow DSL - Workflow Schema.
+ * Open Workflow Specification DSL - Workflow Schema.
  */
 export interface Workflow {
   document: Document;

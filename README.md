@@ -1,6 +1,6 @@
-![Node CI](https://github.com/serverlessworkflow/sdk-typescript/workflows/Node%20CI/badge.svg) [![Gitpod ready-to-code](https://img.shields.io/badge/Gitpod-ready--to--code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/serverlessworkflow/sdk-typescript)
+![Node CI](https://github.com/open-workflow-specification/sdk-typescript/workflows/Node%20CI/badge.svg) [![Gitpod ready-to-code](https://img.shields.io/badge/Gitpod-ready--to--code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/open-workflow-specification/sdk-typescript)
 
-- [Serverless Workflow Specification - TypeScript SDK](#serverless-workflow-specification---typescript-sdk)
+- [Open Workflow Specification - TypeScript SDK](#open-workflow-specification---typescript-sdk)
   - [Status](#status)
   - [SDK Structure](#sdk-structure)
     - [Types and Interfaces](#types-and-interfaces)
@@ -21,9 +21,9 @@
       - [Generate a MermaidJS flowchart](#generate-a-mermaidjs-flowchart)
     - [Building Locally](#building-locally)
 
-# Serverless Workflow Specification - TypeScript SDK
+# Open Workflow Specification - TypeScript SDK
 
-This SDK provides a TypeScript API for working with the [Serverless Workflow Specification](https://github.com/serverlessworkflow/specification).
+This SDK provides a TypeScript API for working with the [Open Workflow Specification](https://github.com/open-workflow-specification/specification).
 
 With this SDK, you can:
 
@@ -34,12 +34,12 @@ With this SDK, you can:
 
 ## Status
 
-The npm [`@serverlessworkflow/sdk`](https://www.npmjs.com/package/@serverlessworkflow/sdk) package versioning aligns with the versioning of the [specification](https://github.com/serverlessworkflow/specification):
+The npm [`@openworkflowspec/sdk`](https://www.npmjs.com/package/@openworkflowspec/sdk) package versioning aligns with the versioning of the [specification](https://github.com/open-workflow-specification/specification):
 
 |                              Latest Releases                              |                      Conformance to Spec Version                       |
 | :-----------------------------------------------------------------------: | :--------------------------------------------------------------------: |
-| [v1.0.\*](https://github.com/serverlessworkflow/sdk-typescript/releases/) |     [v1.0.\*](https://github.com/serverlessworkflow/specification)      |
-| [v0.8.4](https://github.com/serverlessworkflow/sdk-typescript/releases/)  | [v0.8](https://github.com/serverlessworkflow/specification/tree/0.8.x) |
+| [v1.0.\*](https://github.com/open-workflow-specification/sdk-typescript/releases/) |     [v1.0.\*](https://github.com/open-workflow-specification/specification)      |
+| [v0.8.4](https://github.com/open-workflow-specification/sdk-typescript/releases/)  | [v0.8](https://github.com/open-workflow-specification/specification/tree/0.8.x) |
 
 The repository is currently developed and validated on Node.js `22+`.
 
@@ -50,9 +50,9 @@ The repository is currently developed and validated on Node.js `22+`.
 
 |                             Latest Releases                              |                      Conformance to Spec Version                       |
 | :----------------------------------------------------------------------: | :--------------------------------------------------------------------: |
-| [v1.0.0](https://github.com/serverlessworkflow/sdk-typescript/releases/) | [v0.6](https://github.com/serverlessworkflow/specification/tree/0.6.x) |
-| [v2.0.0](https://github.com/serverlessworkflow/sdk-typescript/releases/) | [v0.7](https://github.com/serverlessworkflow/specification/tree/0.7.x) |
-| [v3.0.0](https://github.com/serverlessworkflow/sdk-typescript/releases/) | [v0.8](https://github.com/serverlessworkflow/specification/tree/0.8.x) |
+| [v1.0.0](https://github.com/open-workflow-specification/sdk-typescript/releases/) | [v0.6](https://github.com/open-workflow-specification/specification/tree/0.6.x) |
+| [v2.0.0](https://github.com/open-workflow-specification/sdk-typescript/releases/) | [v0.7](https://github.com/open-workflow-specification/specification/tree/0.7.x) |
+| [v3.0.0](https://github.com/open-workflow-specification/sdk-typescript/releases/) | [v0.8](https://github.com/open-workflow-specification/specification/tree/0.8.x) |
 
 ## SDK Structure
 
@@ -97,7 +97,7 @@ The SDK also ships tools to build directed graph and MermaidJS flowcharts from a
 ### Installation
 
 ```sh
-npm install @serverlessworkflow/sdk
+npm install @openworkflowspec/sdk
 ```
 
 ### Usage
@@ -107,7 +107,7 @@ npm install @serverlessworkflow/sdk
 You can deserialize a YAML or JSON representation of the workflow using the static method `Classes.Workflow.deserialize`:
 
 ```typescript
-import { Classes } from '@serverlessworkflow/sdk';
+import { Classes } from '@openworkflowspec/sdk';
 
 // const text = await readFile('/some/path/my-workflow-definition.yaml', { encoding: 'utf8' });
 // const text = await fetch('https://myserver.com/my-workflow-definition.json');
@@ -130,7 +130,7 @@ const workflow = Classes.Workflow.deserialize(text);
 You can type-cast an object to match the structure of a workflow definition:
 
 ```typescript
-import { Classes, Specification, validate } from '@serverlessworkflow/sdk';
+import { Classes, Specification, validate } from '@openworkflowspec/sdk';
 
 // Simply cast an object:
 const workflow = {
@@ -166,7 +166,7 @@ try {
 You can create a workflow definition by calling a constructor:
 
 ```typescript
-import { Classes, validate } from '@serverlessworkflow/sdk';
+import { Classes, validate } from '@openworkflowspec/sdk';
 
 // Simply use the constructor
 const workflow = new Classes.Workflow({
@@ -211,7 +211,7 @@ try {
 You can use the fluent API to build a validated and normalized workflow definition:
 
 ```typescript
-import { documentBuilder, setTaskBuilder, taskListBuilder, workflowBuilder } from '@serverlessworkflow/sdk';
+import { documentBuilder, setTaskBuilder, taskListBuilder, workflowBuilder } from '@openworkflowspec/sdk';
 
 const workflow = workflowBuilder(/*workflowObject*/)
   .document(documentBuilder().dsl('1.0.3').name('test').version('1.0.0').namespace('default').build())
@@ -237,7 +237,7 @@ const workflow = workflowBuilder(/*workflowObject*/)
 You can serialize a workflow definition either by using its `serialize` method if it's an instance or the static method with the same name:
 
 ```typescript
-import { Classes } from '@serverlessworkflow/sdk';
+import { Classes } from '@openworkflowspec/sdk';
 
 // const workflow = <Your preferred method>;
 if (workflow instanceof Classes.Workflow) {
@@ -255,7 +255,7 @@ if (workflow instanceof Classes.Workflow) {
 Validation can be achieved in two ways: via the `validate` function or the instance `validate` method:
 
 ```typescript
-import { Classes, validate } from '@serverlessworkflow/sdk';
+import { Classes, validate } from '@openworkflowspec/sdk';
 
 const workflow = /* <Your preferred method> */;
 try {
@@ -279,7 +279,7 @@ A [directed graph](https://en.wikipedia.org/wiki/Directed_graph) of a workflow c
 - Static `Classes.Workflow.toGraph(workflow)`
 
 ```typescript
-import { buildGraph } from '@serverlessworkflow/sdk';
+import { buildGraph } from '@openworkflowspec/sdk';
 
 const workflow = {
   document: {
@@ -316,7 +316,7 @@ const graph = buildGraph(workflow);
 If you need a flattened graph, with all nested subgraph nodes and edges hoisted into a single collection, use `buildFlatGraph` instead. Pass `true` as the second argument to also strip the entry/exit port nodes:
 
 ```typescript
-import { buildFlatGraph } from '@serverlessworkflow/sdk';
+import { buildFlatGraph } from '@openworkflowspec/sdk';
 
 const flatGraph = buildFlatGraph(workflow);
 // const flatGraphWithoutPorts = buildFlatGraph(workflow, true);
@@ -330,7 +330,7 @@ Generating a [MermaidJS](https://mermaid.js.org/) flowchart can be achieved in t
 - Static `Classes.Workflow.toMermaidCode(workflow)`
 
 ```typescript
-import { convertToMermaidCode, MermaidDiagram } from '@serverlessworkflow/sdk';
+import { convertToMermaidCode, MermaidDiagram } from '@openworkflowspec/sdk';
 
 const workflow = {
   document: {
@@ -385,7 +385,7 @@ You can refer to the Mermaid browser examples for a live demo. The browser sampl
 To build the project and run the full validation pipeline locally, use the following commands:
 
 ```sh
-git clone https://github.com/serverlessworkflow/sdk-typescript.git
+git clone https://github.com/open-workflow-specification/sdk-typescript.git
 cd sdk-typescript
 npm install
 npm run lint

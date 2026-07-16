@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-Present The Serverless Workflow Specification Authors
+ * Copyright 2021-Present The Open Workflow Specification Authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -102,8 +102,8 @@ const argv = yargs(process.argv.slice(2))
   .parseSync();
 /** The URL to download the schema from */
 export const yamlSchemaUrl: URL = new URL(
-  argv.url || `https://serverlessworkflow.io/schemas/${schemaVersion}/workflow.yaml`,
+  argv.url || `https://open-workflow-specification.org/schemas/${schemaVersion}/workflow.yaml`,
 );
 export const jsonSchemaUrl: URL = new URL(
-  argv.url || `https://serverlessworkflow.io/schemas/${schemaVersion}/workflow.json`,
+  argv.url || `https://open-workflow-specification.org/schemas/${schemaVersion}/workflow.json`,
 );

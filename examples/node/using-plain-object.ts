@@ -1,4 +1,4 @@
-import { Classes, Specification, validate } from /*'@serverlessworkflow/sdk';*/ '../../dist';
+import { Classes, Specification, validate } from /*'@openworkflowspec/sdk';*/ '../../dist';
 
 const workflowDefinition = {
   document: {

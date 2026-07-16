@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-Present The Serverless Workflow Specification Authors
+ * Copyright 2021-Present The Open Workflow Specification Authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -189,7 +189,7 @@ async function generate(srcFile: string, destFile: string): Promise<void> {
   const options: Partial<Options> = {
     // prefere `prepareSchema` to set a title rather than `customName` otherwise the next step (validation pointers generation) will fail
     customName: (schema: JSONSchema) /*, keyNameFromDefinition: string | undefined)*/ => {
-      if (schema.$id?.includes('serverlessworkflow.io')) {
+      if (schema.$id?.includes('open-workflow-specification.org')) {
         return 'Workflow';
       }
       if (schema.$id == 'OpenIdConnectAuthenticationProperties') {

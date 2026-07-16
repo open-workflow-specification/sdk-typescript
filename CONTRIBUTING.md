@@ -1,11 +1,11 @@
-## Contributing to the Serverless Workflow TypeScript SDK
+## Contributing to the Open Workflow Specification TypeScript SDK
 
 The SDK is developed and validated on Node.js `22+`, and the local workflow is intended to work on Windows, macOS, and Linux.
 
 ### Local setup
 
 ```sh
-git clone https://github.com/serverlessworkflow/sdk-typescript.git
+git clone https://github.com/open-workflow-specification/sdk-typescript.git
 cd sdk-typescript
 npm install
 ```
@@ -26,7 +26,7 @@ npm run validate:package
 
 ### Generated code workflow
 
-The SDK tracks generated files under `src/lib/generated/`. These files are derived from the Serverless Workflow schema and should not be edited by hand.
+The SDK tracks generated files under `src/lib/generated/`. These files are derived from the Open Workflow Specification schema and should not be edited by hand.
 
 Use the following command when the schema or generator logic changes:
 
@@ -54,4 +54,4 @@ npm run serve
 
 If you prefer a hosted environment, Gitpod support is still available:
 
-[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/serverlessworkflow/sdk-typescript)
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/open-workflow-specification/sdk-typescript)

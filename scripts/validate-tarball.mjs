@@ -20,7 +20,7 @@ const packageExtractDir = path.resolve(tempDir, 'extracted');
 const extractedPackageDir = path.resolve(packageExtractDir, 'package');
 const consumerDir = path.resolve(tempDir, 'consumer');
 const consumerNodeModulesDir = path.resolve(consumerDir, 'node_modules');
-const consumerPackageDir = path.resolve(consumerNodeModulesDir, '@serverlessworkflow', 'sdk');
+const consumerPackageDir = path.resolve(consumerNodeModulesDir, '@openworkflowspec', 'sdk');
 
 /**
  * Reads a fixed-width string field from a tar header and trims trailing null
@@ -213,7 +213,7 @@ try {
 
   writeFileSync(
     path.resolve(consumerDir, 'smoke-test.cjs'),
-    `const sdk = require('@serverlessworkflow/sdk');
+    `const sdk = require('@openworkflowspec/sdk');
 if (typeof sdk.Classes?.Workflow !== 'function') {
   throw new Error('Expected Classes.Workflow to be available from the CommonJS entrypoint.');
 }
@@ -225,7 +225,7 @@ if (typeof sdk.workflowBuilder !== 'function') {
 
   writeFileSync(
     path.resolve(consumerDir, 'smoke-test.mjs'),
-    `import { Classes, workflowBuilder } from '@serverlessworkflow/sdk';
+    `import { Classes, workflowBuilder } from '@openworkflowspec/sdk';
 if (typeof Classes?.Workflow !== 'function') {
   throw new Error('Expected Classes.Workflow to be available from the ESM entrypoint.');
 }
@@ -237,7 +237,7 @@ if (typeof workflowBuilder !== 'function') {
 
   writeFileSync(
     path.resolve(consumerDir, 'smoke-types.ts'),
-    `import { Classes, type Specification, workflowBuilder } from '@serverlessworkflow/sdk';
+    `import { Classes, type Specification, workflowBuilder } from '@openworkflowspec/sdk';
 
 const workflow: Specification.Workflow = {
   document: {

@@ -17,15 +17,13 @@ do:
     const graph = buildGraph(workflow);
     expect(graph).toBeDefined();
 
-    const initializeNode = graph.nodes.find((n) => n.id === '/do/0/initialize');
+    const initializeNode = graph.nodes.find((n) => n.id === '/do/initialize');
     expect(initializeNode).toBeDefined();
     expect(initializeNode?.type).toBe(GraphNodeType.Set);
     expect(initializeNode?.label).toBe('initialize');
 
-    expect(
-      graph.edges.find((e) => e.sourceId === 'root-entry-node' && e.targetId === '/do/0/initialize'),
-    ).toBeDefined();
-    expect(graph.edges.find((e) => e.sourceId === '/do/0/initialize' && e.targetId === 'root-exit-node')).toBeDefined();
+    expect(graph.edges.find((e) => e.sourceId === 'root-entry-node' && e.targetId === '/do/initialize')).toBeDefined();
+    expect(graph.edges.find((e) => e.sourceId === '/do/initialize' && e.targetId === 'root-exit-node')).toBeDefined();
 
     expect(graph.nodes.length).toBe(3); // start --> initialize --> end
     expect(graph.edges.length).toBe(2);
@@ -45,14 +43,12 @@ do:
     const graph = workflow.toGraph();
     expect(graph).toBeDefined();
 
-    const initializeNode = graph.nodes.find((n) => n.id === '/do/0/initialize');
+    const initializeNode = graph.nodes.find((n) => n.id === '/do/initialize');
     expect(initializeNode).toBeDefined();
     expect(initializeNode?.type).toBe(GraphNodeType.Set);
 
-    expect(
-      graph.edges.find((e) => e.sourceId === 'root-entry-node' && e.targetId === '/do/0/initialize'),
-    ).toBeDefined();
-    expect(graph.edges.find((e) => e.sourceId === '/do/0/initialize' && e.targetId === 'root-exit-node')).toBeDefined();
+    expect(graph.edges.find((e) => e.sourceId === 'root-entry-node' && e.targetId === '/do/initialize')).toBeDefined();
+    expect(graph.edges.find((e) => e.sourceId === '/do/initialize' && e.targetId === 'root-exit-node')).toBeDefined();
 
     expect(graph.nodes.length).toBe(3); // start --> initialize --> end
     expect(graph.edges.length).toBe(2);
@@ -79,14 +75,12 @@ do:
     const graph = Classes.Workflow.toGraph(workflow);
     expect(graph).toBeDefined();
 
-    const initializeNode = graph.nodes.find((n) => n.id === '/do/0/initialize');
+    const initializeNode = graph.nodes.find((n) => n.id === '/do/initialize');
     expect(initializeNode).toBeDefined();
     expect(initializeNode?.type).toBe(GraphNodeType.Set);
 
-    expect(
-      graph.edges.find((e) => e.sourceId === 'root-entry-node' && e.targetId === '/do/0/initialize'),
-    ).toBeDefined();
-    expect(graph.edges.find((e) => e.sourceId === '/do/0/initialize' && e.targetId === 'root-exit-node')).toBeDefined();
+    expect(graph.edges.find((e) => e.sourceId === 'root-entry-node' && e.targetId === '/do/initialize')).toBeDefined();
+    expect(graph.edges.find((e) => e.sourceId === '/do/initialize' && e.targetId === 'root-exit-node')).toBeDefined();
 
     expect(graph.nodes.length).toBe(3); // start --> initialize --> end
     expect(graph.edges.length).toBe(2);
@@ -112,17 +106,17 @@ do:
     const graph = buildGraph(workflow);
     expect(graph).toBeDefined();
 
-    const step1 = graph.nodes.find((n) => n.id === '/do/0/step1');
-    const step2 = graph.nodes.find((n) => n.id === '/do/1/step2');
-    const step3 = graph.nodes.find((n) => n.id === '/do/2/step3');
+    const step1 = graph.nodes.find((n) => n.id === '/do/step1');
+    const step2 = graph.nodes.find((n) => n.id === '/do/step2');
+    const step3 = graph.nodes.find((n) => n.id === '/do/step3');
     expect(step1?.type).toBe(GraphNodeType.Set);
     expect(step2?.type).toBe(GraphNodeType.Set);
     expect(step3?.type).toBe(GraphNodeType.Set);
 
-    expect(graph.edges.find((e) => e.sourceId === 'root-entry-node' && e.targetId === '/do/0/step1')).toBeDefined();
-    expect(graph.edges.find((e) => e.sourceId === '/do/0/step1' && e.targetId === '/do/1/step2')).toBeDefined();
-    expect(graph.edges.find((e) => e.sourceId === '/do/1/step2' && e.targetId === '/do/2/step3')).toBeDefined();
-    expect(graph.edges.find((e) => e.sourceId === '/do/2/step3' && e.targetId === 'root-exit-node')).toBeDefined();
+    expect(graph.edges.find((e) => e.sourceId === 'root-entry-node' && e.targetId === '/do/step1')).toBeDefined();
+    expect(graph.edges.find((e) => e.sourceId === '/do/step1' && e.targetId === '/do/step2')).toBeDefined();
+    expect(graph.edges.find((e) => e.sourceId === '/do/step2' && e.targetId === '/do/step3')).toBeDefined();
+    expect(graph.edges.find((e) => e.sourceId === '/do/step3' && e.targetId === 'root-exit-node')).toBeDefined();
 
     expect(graph.nodes.length).toBe(5); // start --> step1 --> step2 --> step3 --> end
     expect(graph.edges.length).toBe(4);
@@ -143,12 +137,12 @@ do:
     const graph = buildGraph(workflow);
     expect(graph).toBeDefined();
 
-    const initializeNode = graph.nodes.find((n) => n.id === '/do/0/initialize');
+    const initializeNode = graph.nodes.find((n) => n.id === '/do/initialize');
     expect(initializeNode?.type).toBe(GraphNodeType.Set);
 
     // Conditional edge: start -- (if expression) --> initialize
     const conditionalEdge = graph.edges.find(
-      (e) => e.sourceId === 'root-entry-node' && e.targetId === '/do/0/initialize',
+      (e) => e.sourceId === 'root-entry-node' && e.targetId === '/do/initialize',
     );
     expect(conditionalEdge?.label).toBe('${ input.data == true }');
 
@@ -156,7 +150,7 @@ do:
     expect(graph.edges.find((e) => e.sourceId === 'root-entry-node' && e.targetId === 'root-exit-node')).toBeDefined();
 
     // Completion edge: initialize -> end
-    expect(graph.edges.find((e) => e.sourceId === '/do/0/initialize' && e.targetId === 'root-exit-node')).toBeDefined();
+    expect(graph.edges.find((e) => e.sourceId === '/do/initialize' && e.targetId === 'root-exit-node')).toBeDefined();
 
     expect(graph.nodes.length).toBe(3); // start --> initialize --> end
     expect(graph.edges.length).toBe(3); //       ----------------->
@@ -188,31 +182,31 @@ do:
     const graph = buildGraph(workflow);
     expect(graph).toBeDefined();
 
-    const forSubgraph = graph.nodes.find((node) => node.id === '/do/0/checkup') as Graph;
+    const forSubgraph = graph.nodes.find((node) => node.id === '/do/checkup') as Graph;
     expect(forSubgraph).toBeDefined();
     expect(forSubgraph.type).toBe(GraphNodeType.For);
 
     // Root edges wire the For subgraph's entry/exit ports into the root pipeline.
     expect(
-      graph.edges.find((e) => e.sourceId === 'root-entry-node' && e.targetId === '/do/0/checkup-entry-node'),
+      graph.edges.find((e) => e.sourceId === 'root-entry-node' && e.targetId === 'port-/do/checkup-entry-node'),
     ).toBeDefined();
     expect(
-      graph.edges.find((e) => e.sourceId === '/do/0/checkup-exit-node' && e.targetId === 'root-exit-node'),
+      graph.edges.find((e) => e.sourceId === 'port-/do/checkup-exit-node' && e.targetId === 'root-exit-node'),
     ).toBeDefined();
     expect(graph.nodes.length).toBe(3); // start --> checkup --> end
     expect(graph.edges.length).toBe(2);
 
     // Subgraph internals: entry -> waitForCheckup -> exit
-    const waitNode = forSubgraph.nodes.find((n) => n.id === '/do/0/checkup/for/do/0/waitForCheckup');
+    const waitNode = forSubgraph.nodes.find((n) => n.id === '/do/checkup/do/waitForCheckup');
     expect(waitNode?.type).toBe(GraphNodeType.Listen);
     expect(
       forSubgraph.edges.find(
-        (e) => e.sourceId === '/do/0/checkup-entry-node' && e.targetId === '/do/0/checkup/for/do/0/waitForCheckup',
+        (e) => e.sourceId === 'port-/do/checkup-entry-node' && e.targetId === '/do/checkup/do/waitForCheckup',
       ),
     ).toBeDefined();
     expect(
       forSubgraph.edges.find(
-        (e) => e.sourceId === '/do/0/checkup/for/do/0/waitForCheckup' && e.targetId === '/do/0/checkup-exit-node',
+        (e) => e.sourceId === '/do/checkup/do/waitForCheckup' && e.targetId === 'port-/do/checkup-exit-node',
       ),
     ).toBeDefined();
     expect(forSubgraph.nodes.length).toBe(3); // entry --> waitForCheckup --> exit
@@ -257,7 +251,7 @@ do:
         foo: bar`);
     const graph = buildGraph(workflow);
     const decideToDoneEdges = graph.edges.filter(
-      (edge) => edge.sourceId === '/do/0/decide' && edge.targetId === '/do/1/done',
+      (edge) => edge.sourceId === '/do/decide' && edge.targetId === '/do/done',
     );
 
     expect(decideToDoneEdges).toHaveLength(1);
@@ -283,14 +277,14 @@ do:
     const graph = buildGraph(workflow);
     expect(graph).toBeDefined();
 
-    const taskA = graph.nodes.find((n) => n.id === '/do/0/taskA');
-    const taskB = graph.nodes.find((n) => n.id === '/do/1/taskB');
+    const taskA = graph.nodes.find((n) => n.id === '/do/taskA');
+    const taskB = graph.nodes.find((n) => n.id === '/do/taskB');
     expect(taskA?.type).toBe(GraphNodeType.Set);
     expect(taskB?.type).toBe(GraphNodeType.Set);
 
-    expect(graph.edges.find((e) => e.sourceId === 'root-entry-node' && e.targetId === '/do/0/taskA')).toBeDefined();
-    expect(graph.edges.find((e) => e.sourceId === '/do/0/taskA' && e.targetId === '/do/1/taskB')).toBeDefined();
-    expect(graph.edges.find((e) => e.sourceId === '/do/1/taskB' && e.targetId === '/do/0/taskA')).toBeDefined();
+    expect(graph.edges.find((e) => e.sourceId === 'root-entry-node' && e.targetId === '/do/taskA')).toBeDefined();
+    expect(graph.edges.find((e) => e.sourceId === '/do/taskA' && e.targetId === '/do/taskB')).toBeDefined();
+    expect(graph.edges.find((e) => e.sourceId === '/do/taskB' && e.targetId === '/do/taskA')).toBeDefined();
 
     expect(graph.nodes.length).toBe(4); // start, taskA, taskB, end
     expect(graph.edges.length).toBe(3); // start->taskA, taskA->taskB, taskB->taskA
@@ -311,11 +305,11 @@ do:
     const graph = buildGraph(workflow);
     expect(graph).toBeDefined();
 
-    const loopTask = graph.nodes.find((n) => n.id === '/do/0/loopTask');
+    const loopTask = graph.nodes.find((n) => n.id === '/do/loopTask');
     expect(loopTask?.type).toBe(GraphNodeType.Set);
 
-    expect(graph.edges.find((e) => e.sourceId === 'root-entry-node' && e.targetId === '/do/0/loopTask')).toBeDefined();
-    expect(graph.edges.find((e) => e.sourceId === '/do/0/loopTask' && e.targetId === '/do/0/loopTask')).toBeDefined();
+    expect(graph.edges.find((e) => e.sourceId === 'root-entry-node' && e.targetId === '/do/loopTask')).toBeDefined();
+    expect(graph.edges.find((e) => e.sourceId === '/do/loopTask' && e.targetId === '/do/loopTask')).toBeDefined();
 
     expect(graph.nodes.length).toBe(3); // start, loopTask, end
     expect(graph.edges.length).toBe(2); // start->loopTask, loopTask->loopTask
@@ -344,27 +338,31 @@ do:
     const graph = buildGraph(workflow);
     expect(graph).toBeDefined();
 
-    const devSubgraph = graph.nodes.find((n) => n.id === '/do/0/awaitForDevWork') as Graph;
-    const qaSubgraph = graph.nodes.find((n) => n.id === '/do/1/awaitDetailsFromQA') as Graph;
+    const devSubgraph = graph.nodes.find((n) => n.id === '/do/awaitForDevWork') as Graph;
+    const qaSubgraph = graph.nodes.find((n) => n.id === '/do/awaitDetailsFromQA') as Graph;
     expect(devSubgraph?.type).toBe(GraphNodeType.Do);
     expect(qaSubgraph?.type).toBe(GraphNodeType.Do);
-    expect(devSubgraph.nodes.find((n) => n.id === '/do/0/awaitForDevWork/do/0/notifyDev')).toBeDefined();
-    expect(qaSubgraph.nodes.find((n) => n.id === '/do/1/awaitDetailsFromQA/do/0/notifyQA')).toBeDefined();
+    expect(devSubgraph.nodes.find((n) => n.id === '/do/awaitForDevWork/do/notifyDev')).toBeDefined();
+    expect(qaSubgraph.nodes.find((n) => n.id === '/do/awaitDetailsFromQA/do/notifyQA')).toBeDefined();
 
     // Entry edge into the first subgraph
     expect(
-      graph.edges.find((e) => e.sourceId === 'root-entry-node' && e.targetId === '/do/0/awaitForDevWork-entry-node'),
+      graph.edges.find((e) => e.sourceId === 'root-entry-node' && e.targetId === 'port-/do/awaitForDevWork-entry-node'),
     ).toBeDefined();
     // Forward edge from dev -> qa (subgraph exit to subgraph entry)
     expect(
       graph.edges.find(
-        (e) => e.sourceId === '/do/0/awaitForDevWork-exit-node' && e.targetId === '/do/1/awaitDetailsFromQA-entry-node',
+        (e) =>
+          e.sourceId === 'port-/do/awaitForDevWork-exit-node' &&
+          e.targetId === 'port-/do/awaitDetailsFromQA-entry-node',
       ),
     ).toBeDefined();
     // Back edge: qa -> dev
     expect(
       graph.edges.find(
-        (e) => e.sourceId === '/do/1/awaitDetailsFromQA-exit-node' && e.targetId === '/do/0/awaitForDevWork-entry-node',
+        (e) =>
+          e.sourceId === 'port-/do/awaitDetailsFromQA-exit-node' &&
+          e.targetId === 'port-/do/awaitForDevWork-entry-node',
       ),
     ).toBeDefined();
 
@@ -426,15 +424,13 @@ do:
         endpoint: https://example.com/orders/1`);
     const graph = buildGraph(workflow);
 
-    const callNode = graph.nodes.find((n) => n.id === '/do/0/fetchOrder');
+    const callNode = graph.nodes.find((n) => n.id === '/do/fetchOrder');
     expect(callNode).toBeDefined();
     expect(callNode?.type).toBe(GraphNodeType.Call);
     expect(callNode?.label).toBe('fetchOrder');
 
-    expect(
-      graph.edges.find((e) => e.sourceId === 'root-entry-node' && e.targetId === '/do/0/fetchOrder'),
-    ).toBeDefined();
-    expect(graph.edges.find((e) => e.sourceId === '/do/0/fetchOrder' && e.targetId === 'root-exit-node')).toBeDefined();
+    expect(graph.edges.find((e) => e.sourceId === 'root-entry-node' && e.targetId === '/do/fetchOrder')).toBeDefined();
+    expect(graph.edges.find((e) => e.sourceId === '/do/fetchOrder' && e.targetId === 'root-exit-node')).toBeDefined();
 
     expect(graph.nodes.length).toBe(3); // start --> fetchOrder --> end
     expect(graph.edges.length).toBe(2);
@@ -456,12 +452,12 @@ do:
             type: com.example.order.placed.v1`);
     const graph = buildGraph(workflow);
 
-    const emitNode = graph.nodes.find((n) => n.id === '/do/0/notify');
+    const emitNode = graph.nodes.find((n) => n.id === '/do/notify');
     expect(emitNode).toBeDefined();
     expect(emitNode?.type).toBe(GraphNodeType.Emit);
 
-    expect(graph.edges.find((e) => e.sourceId === 'root-entry-node' && e.targetId === '/do/0/notify')).toBeDefined();
-    expect(graph.edges.find((e) => e.sourceId === '/do/0/notify' && e.targetId === 'root-exit-node')).toBeDefined();
+    expect(graph.edges.find((e) => e.sourceId === 'root-entry-node' && e.targetId === '/do/notify')).toBeDefined();
+    expect(graph.edges.find((e) => e.sourceId === '/do/notify' && e.targetId === 'root-exit-node')).toBeDefined();
 
     expect(graph.nodes.length).toBe(3);
     expect(graph.edges.length).toBe(2);
@@ -486,34 +482,34 @@ do:
                 b: 2`);
     const graph = buildGraph(workflow);
 
-    const forkSubgraph = graph.nodes.find((n) => n.id === '/do/0/split') as Graph;
+    const forkSubgraph = graph.nodes.find((n) => n.id === '/do/split') as Graph;
     expect(forkSubgraph).toBeDefined();
     expect(forkSubgraph.type).toBe(GraphNodeType.Fork);
 
-    const branchA = forkSubgraph.nodes.find((n) => n.id === '/do/0/split/fork/branches/0/branchA');
-    const branchB = forkSubgraph.nodes.find((n) => n.id === '/do/0/split/fork/branches/1/branchB');
+    const branchA = forkSubgraph.nodes.find((n) => n.id === '/do/split/fork/branches/branchA');
+    const branchB = forkSubgraph.nodes.find((n) => n.id === '/do/split/fork/branches/branchB');
     expect(branchA?.type).toBe(GraphNodeType.Set);
     expect(branchB?.type).toBe(GraphNodeType.Set);
 
     // Each branch fans out from the fork subgraph entry and joins its exit.
     expect(
       forkSubgraph.edges.find(
-        (e) => e.sourceId === '/do/0/split-entry-node' && e.targetId === '/do/0/split/fork/branches/0/branchA',
+        (e) => e.sourceId === 'port-/do/split-entry-node' && e.targetId === '/do/split/fork/branches/branchA',
       ),
     ).toBeDefined();
     expect(
       forkSubgraph.edges.find(
-        (e) => e.sourceId === '/do/0/split-entry-node' && e.targetId === '/do/0/split/fork/branches/1/branchB',
+        (e) => e.sourceId === 'port-/do/split-entry-node' && e.targetId === '/do/split/fork/branches/branchB',
       ),
     ).toBeDefined();
     expect(
       forkSubgraph.edges.find(
-        (e) => e.sourceId === '/do/0/split/fork/branches/0/branchA' && e.targetId === '/do/0/split-exit-node',
+        (e) => e.sourceId === '/do/split/fork/branches/branchA' && e.targetId === 'port-/do/split-exit-node',
       ),
     ).toBeDefined();
     expect(
       forkSubgraph.edges.find(
-        (e) => e.sourceId === '/do/0/split/fork/branches/1/branchB' && e.targetId === '/do/0/split-exit-node',
+        (e) => e.sourceId === '/do/split/fork/branches/branchB' && e.targetId === 'port-/do/split-exit-node',
       ),
     ).toBeDefined();
 
@@ -539,16 +535,14 @@ do:
               type: com.example.order.placed.v1`);
     const graph = buildGraph(workflow);
 
-    const listenNode = graph.nodes.find((n) => n.id === '/do/0/waitForOrder');
+    const listenNode = graph.nodes.find((n) => n.id === '/do/waitForOrder');
     expect(listenNode).toBeDefined();
     expect(listenNode?.type).toBe(GraphNodeType.Listen);
 
     expect(
-      graph.edges.find((e) => e.sourceId === 'root-entry-node' && e.targetId === '/do/0/waitForOrder'),
+      graph.edges.find((e) => e.sourceId === 'root-entry-node' && e.targetId === '/do/waitForOrder'),
     ).toBeDefined();
-    expect(
-      graph.edges.find((e) => e.sourceId === '/do/0/waitForOrder' && e.targetId === 'root-exit-node'),
-    ).toBeDefined();
+    expect(graph.edges.find((e) => e.sourceId === '/do/waitForOrder' && e.targetId === 'root-exit-node')).toBeDefined();
 
     expect(graph.nodes.length).toBe(3);
     expect(graph.edges.length).toBe(2);
@@ -570,12 +564,12 @@ do:
           title: Validation Error`);
     const graph = buildGraph(workflow);
 
-    const raiseNode = graph.nodes.find((n) => n.id === '/do/0/fail');
+    const raiseNode = graph.nodes.find((n) => n.id === '/do/fail');
     expect(raiseNode).toBeDefined();
     expect(raiseNode?.type).toBe(GraphNodeType.Raise);
 
-    expect(graph.edges.find((e) => e.sourceId === 'root-entry-node' && e.targetId === '/do/0/fail')).toBeDefined();
-    expect(graph.edges.find((e) => e.sourceId === '/do/0/fail' && e.targetId === 'root-exit-node')).toBeDefined();
+    expect(graph.edges.find((e) => e.sourceId === 'root-entry-node' && e.targetId === '/do/fail')).toBeDefined();
+    expect(graph.edges.find((e) => e.sourceId === '/do/fail' && e.targetId === 'root-exit-node')).toBeDefined();
 
     expect(graph.nodes.length).toBe(3);
     expect(graph.edges.length).toBe(2);
@@ -595,12 +589,12 @@ do:
           command: echo "hello"`);
     const graph = buildGraph(workflow);
 
-    const runNode = graph.nodes.find((n) => n.id === '/do/0/runScript');
+    const runNode = graph.nodes.find((n) => n.id === '/do/runScript');
     expect(runNode).toBeDefined();
     expect(runNode?.type).toBe(GraphNodeType.Run);
 
-    expect(graph.edges.find((e) => e.sourceId === 'root-entry-node' && e.targetId === '/do/0/runScript')).toBeDefined();
-    expect(graph.edges.find((e) => e.sourceId === '/do/0/runScript' && e.targetId === 'root-exit-node')).toBeDefined();
+    expect(graph.edges.find((e) => e.sourceId === 'root-entry-node' && e.targetId === '/do/runScript')).toBeDefined();
+    expect(graph.edges.find((e) => e.sourceId === '/do/runScript' && e.targetId === 'root-exit-node')).toBeDefined();
 
     expect(graph.nodes.length).toBe(3);
     expect(graph.edges.length).toBe(2);
@@ -619,12 +613,12 @@ do:
         seconds: 5`);
     const graph = buildGraph(workflow);
 
-    const waitNode = graph.nodes.find((n) => n.id === '/do/0/pause');
+    const waitNode = graph.nodes.find((n) => n.id === '/do/pause');
     expect(waitNode).toBeDefined();
     expect(waitNode?.type).toBe(GraphNodeType.Wait);
 
-    expect(graph.edges.find((e) => e.sourceId === 'root-entry-node' && e.targetId === '/do/0/pause')).toBeDefined();
-    expect(graph.edges.find((e) => e.sourceId === '/do/0/pause' && e.targetId === 'root-exit-node')).toBeDefined();
+    expect(graph.edges.find((e) => e.sourceId === 'root-entry-node' && e.targetId === '/do/pause')).toBeDefined();
+    expect(graph.edges.find((e) => e.sourceId === '/do/pause' && e.targetId === 'root-exit-node')).toBeDefined();
 
     expect(graph.nodes.length).toBe(3);
     expect(graph.edges.length).toBe(2);
@@ -648,26 +642,24 @@ do:
               b: 2`);
     const graph = buildGraph(workflow);
 
-    const doSubgraph = graph.nodes.find((n) => n.id === '/do/0/group') as Graph;
+    const doSubgraph = graph.nodes.find((n) => n.id === '/do/group') as Graph;
     expect(doSubgraph).toBeDefined();
     expect(doSubgraph.type).toBe(GraphNodeType.Do);
 
-    const inner1 = doSubgraph.nodes.find((n) => n.id === '/do/0/group/do/0/inner1');
-    const inner2 = doSubgraph.nodes.find((n) => n.id === '/do/0/group/do/1/inner2');
+    const inner1 = doSubgraph.nodes.find((n) => n.id === '/do/group/do/inner1');
+    const inner2 = doSubgraph.nodes.find((n) => n.id === '/do/group/do/inner2');
     expect(inner1?.type).toBe(GraphNodeType.Set);
     expect(inner2?.type).toBe(GraphNodeType.Set);
 
     // entry -> inner1 -> inner2 -> exit
     expect(
-      doSubgraph.edges.find((e) => e.sourceId === '/do/0/group-entry-node' && e.targetId === '/do/0/group/do/0/inner1'),
+      doSubgraph.edges.find((e) => e.sourceId === 'port-/do/group-entry-node' && e.targetId === '/do/group/do/inner1'),
     ).toBeDefined();
     expect(
-      doSubgraph.edges.find(
-        (e) => e.sourceId === '/do/0/group/do/0/inner1' && e.targetId === '/do/0/group/do/1/inner2',
-      ),
+      doSubgraph.edges.find((e) => e.sourceId === '/do/group/do/inner1' && e.targetId === '/do/group/do/inner2'),
     ).toBeDefined();
     expect(
-      doSubgraph.edges.find((e) => e.sourceId === '/do/0/group/do/1/inner2' && e.targetId === '/do/0/group-exit-node'),
+      doSubgraph.edges.find((e) => e.sourceId === '/do/group/do/inner2' && e.targetId === 'port-/do/group-exit-node'),
     ).toBeDefined();
 
     // entry, exit, inner1, inner2
@@ -761,14 +753,14 @@ do:
     const decideNode = graph.nodes.find((node) => node.label === 'decide');
     expect(decideNode?.type).toBe(GraphNodeType.Switch);
 
-    const matchedEdge = graph.edges.find((e) => e.sourceId === '/do/0/decide' && e.targetId === '/do/1/matchedStep');
-    const defaultEdge = graph.edges.find((e) => e.sourceId === '/do/0/decide' && e.targetId === '/do/2/defaultStep');
+    const matchedEdge = graph.edges.find((e) => e.sourceId === '/do/decide' && e.targetId === '/do/matchedStep');
+    const defaultEdge = graph.edges.find((e) => e.sourceId === '/do/decide' && e.targetId === '/do/defaultStep');
     expect(matchedEdge?.label).toBe('matched');
     expect(defaultEdge?.label).toBe('default');
 
     // Because the switch has a default case, there must be no implicit fall-through edge from decide.
     const fallthrough = graph.edges.filter(
-      (e) => e.sourceId === '/do/0/decide' && e.targetId !== '/do/1/matchedStep' && e.targetId !== '/do/2/defaultStep',
+      (e) => e.sourceId === '/do/decide' && e.targetId !== '/do/matchedStep' && e.targetId !== '/do/defaultStep',
     );
     expect(fallthrough).toHaveLength(0);
   });
@@ -789,7 +781,7 @@ do:
       set:
         never: true`);
     const graph = buildGraph(workflow);
-    const exitEdge = graph.edges.find((e) => e.sourceId === '/do/0/bail' && e.targetId === 'root-exit-node');
+    const exitEdge = graph.edges.find((e) => e.sourceId === '/do/bail' && e.targetId === 'root-exit-node');
     expect(exitEdge).toBeDefined();
   });
 });

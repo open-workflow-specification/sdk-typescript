@@ -17,11 +17,11 @@ do:
     const mermaidCode = convertToMermaidCode(workflow).trim();
     expect(mermaidCode).toBe(
       `flowchart TD
-    root-entry-node(( ))
-    root-exit-node((( )))
-    /do/0/initialize["initialize"]
-    /do/0/initialize --> root-exit-node
-    root-entry-node --> /do/0/initialize
+    n0(( ))
+    n1((( )))
+    n2["initialize"]
+    n2 --> n1
+    n0 --> n2
 
 
 classDef hidden width: 1px, height: 1px;`.trim(),
@@ -42,11 +42,11 @@ do:
     const mermaidCode = workflow.toMermaidCode().trim();
     expect(mermaidCode).toBe(
       `flowchart TD
-    root-entry-node(( ))
-    root-exit-node((( )))
-    /do/0/initialize["initialize"]
-    /do/0/initialize --> root-exit-node
-    root-entry-node --> /do/0/initialize
+    n0(( ))
+    n1((( )))
+    n2["initialize"]
+    n2 --> n1
+    n0 --> n2
 
 
 classDef hidden width: 1px, height: 1px;`.trim(),
@@ -74,11 +74,11 @@ classDef hidden width: 1px, height: 1px;`.trim(),
     const mermaidCode = Classes.Workflow.toMermaidCode(workflow).trim();
     expect(mermaidCode).toBe(
       `flowchart TD
-    root-entry-node(( ))
-    root-exit-node((( )))
-    /do/0/initialize["initialize"]
-    /do/0/initialize --> root-exit-node
-    root-entry-node --> /do/0/initialize
+    n0(( ))
+    n1((( )))
+    n2["initialize"]
+    n2 --> n1
+    n0 --> n2
 
 
 classDef hidden width: 1px, height: 1px;`.trim(),
@@ -99,11 +99,11 @@ do:
     const mermaidCode = new MermaidDiagram(workflow).sourceCode().trim();
     expect(mermaidCode).toBe(
       `flowchart TD
-    root-entry-node(( ))
-    root-exit-node((( )))
-    /do/0/initialize["initialize"]
-    /do/0/initialize --> root-exit-node
-    root-entry-node --> /do/0/initialize
+    n0(( ))
+    n1((( )))
+    n2["initialize"]
+    n2 --> n1
+    n0 --> n2
 
 
 classDef hidden width: 1px, height: 1px;`.trim(),
@@ -125,12 +125,12 @@ do:
     const mermaidCode = convertToMermaidCode(workflow).trim();
     expect(mermaidCode).toBe(
       `flowchart TD
-    root-entry-node(( ))
-    root-exit-node((( )))
-    /do/0/initialize["initialize"]
-    /do/0/initialize --> root-exit-node
-    root-entry-node --"\${ input.data == true }"--> /do/0/initialize
-    root-entry-node --> root-exit-node
+    n0(( ))
+    n1((( )))
+    n2["initialize"]
+    n2 --> n1
+    n0 --"\${ input.data == true }"--> n2
+    n0 --> n1
 
 
 classDef hidden width: 1px, height: 1px;`.trim(),
@@ -163,15 +163,47 @@ do:
     const mermaidCode = convertToMermaidCode(workflow).trim();
     expect(mermaidCode).toBe(
       `flowchart TD
-    root-entry-node(( ))
-    root-exit-node((( )))
-    subgraph /do/0/checkup ["checkup"]
-        /do/0/checkup/for/do/0/waitForCheckup["waitForCheckup"]
+    n0(( ))
+    n1((( )))
+    subgraph n2 ["checkup"]
+        n3["waitForCheckup"]
         
     end
-    /do/0/checkup/for/do/0/waitForCheckup["waitForCheckup"]
-    root-entry-node --> /do/0/checkup/for/do/0/waitForCheckup
-    /do/0/checkup/for/do/0/waitForCheckup --> root-exit-node
+    n3["waitForCheckup"]
+    n0 --> n3
+    n3 --> n1
+
+
+classDef hidden width: 1px, height: 1px;`.trim(),
+    );
+  });
+
+  it('should keep the diagram valid when task names contain Mermaid-significant characters', () => {
+    const workflow = {
+      document: {
+        dsl: '1.0.3',
+        name: 'special-characters',
+        version: '1.0.0',
+        namespace: 'test',
+      },
+      do: [
+        {
+          'say "hello world" (loudly)': {
+            set: {
+              foo: 'bar',
+            },
+          },
+        },
+      ],
+    } as Specification.Workflow;
+    const mermaidCode = Classes.Workflow.toMermaidCode(workflow).trim();
+    expect(mermaidCode).toBe(
+      `flowchart TD
+    n0(( ))
+    n1((( )))
+    n2["say #quot;hello world#quot; (loudly)"]
+    n2 --> n1
+    n0 --> n2
 
 
 classDef hidden width: 1px, height: 1px;`.trim(),

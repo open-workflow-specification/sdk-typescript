@@ -27,14 +27,12 @@ do:
     // start, initialize, end
     expect(graph.nodes.find((n) => n.type === GraphNodeType.Start)).toBeDefined();
     expect(graph.nodes.find((n) => n.type === GraphNodeType.End)).toBeDefined();
-    const initializeNode = graph.nodes.find((n) => n.id === '/do/0/initialize');
+    const initializeNode = graph.nodes.find((n) => n.id === '/do/initialize');
     expect(initializeNode?.type).toBe(GraphNodeType.Set);
 
     // start -> initialize -> end
-    expect(
-      graph.edges.find((e) => e.sourceId === 'root-entry-node' && e.targetId === '/do/0/initialize'),
-    ).toBeDefined();
-    expect(graph.edges.find((e) => e.sourceId === '/do/0/initialize' && e.targetId === 'root-exit-node')).toBeDefined();
+    expect(graph.edges.find((e) => e.sourceId === 'root-entry-node' && e.targetId === '/do/initialize')).toBeDefined();
+    expect(graph.edges.find((e) => e.sourceId === '/do/initialize' && e.targetId === 'root-exit-node')).toBeDefined();
 
     expect(graph.nodes.length).toBe(3); // start --> initialize --> end
     expect(graph.edges.length).toBe(2);
@@ -69,20 +67,16 @@ do:
     // start, checkup (For subgraph node), waitForCheckup, end
     expect(graph.nodes.find((n) => n.type === GraphNodeType.Start)).toBeDefined();
     expect(graph.nodes.find((n) => n.type === GraphNodeType.End)).toBeDefined();
-    expect(graph.nodes.find((n) => n.id === '/do/0/checkup')?.type).toBe(GraphNodeType.For);
-    expect(graph.nodes.find((n) => n.id === '/do/0/checkup/for/do/0/waitForCheckup')?.type).toBe(GraphNodeType.Listen);
+    expect(graph.nodes.find((n) => n.id === '/do/checkup')?.type).toBe(GraphNodeType.For);
+    expect(graph.nodes.find((n) => n.id === '/do/checkup/do/waitForCheckup')?.type).toBe(GraphNodeType.Listen);
 
     // After remapping, the inner entry/exit ports are collapsed, so:
     // root-entry -> waitForCheckup, waitForCheckup -> root-exit
     expect(
-      graph.edges.find(
-        (e) => e.sourceId === 'root-entry-node' && e.targetId === '/do/0/checkup/for/do/0/waitForCheckup',
-      ),
+      graph.edges.find((e) => e.sourceId === 'root-entry-node' && e.targetId === '/do/checkup/do/waitForCheckup'),
     ).toBeDefined();
     expect(
-      graph.edges.find(
-        (e) => e.sourceId === '/do/0/checkup/for/do/0/waitForCheckup' && e.targetId === 'root-exit-node',
-      ),
+      graph.edges.find((e) => e.sourceId === '/do/checkup/do/waitForCheckup' && e.targetId === 'root-exit-node'),
     ).toBeDefined();
 
     expect(graph.nodes.length).toBe(4); // start --[--> waitForCheckup --]--> end
@@ -182,7 +176,7 @@ do:
     const waitNode = nodes.find((n) => n.label === 'waitForCheckup');
     expect(waitNode).toBeDefined();
     // Nested node's parentId should point at its enclosing subgraph.
-    expect(waitNode?.parentId).toBe('/do/0/checkup');
+    expect(waitNode?.parentId).toBe('/do/checkup');
     // Root's direct children should have 'root' as parentId.
     expect(nodes.find((n) => n.type === GraphNodeType.Start)?.parentId).toBe('root');
     expect(nodes.find((n) => n.type === GraphNodeType.End)?.parentId).toBe('root');
@@ -222,10 +216,10 @@ do:
     // end up with exactly 2 direct edges: root-entry -> waitForCheckup, waitForCheckup -> root-exit.
     expect(remapped.length).toBe(2);
     expect(
-      remapped.some((e) => e.sourceId === 'root-entry-node' && e.targetId === '/do/0/checkup/for/do/0/waitForCheckup'),
+      remapped.some((e) => e.sourceId === 'root-entry-node' && e.targetId === '/do/checkup/do/waitForCheckup'),
     ).toBe(true);
     expect(
-      remapped.some((e) => e.sourceId === '/do/0/checkup/for/do/0/waitForCheckup' && e.targetId === 'root-exit-node'),
+      remapped.some((e) => e.sourceId === '/do/checkup/do/waitForCheckup' && e.targetId === 'root-exit-node'),
     ).toBe(true);
   });
 

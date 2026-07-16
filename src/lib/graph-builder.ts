@@ -15,14 +15,15 @@ import {
   WaitTask,
   Workflow,
 } from './generated/definitions/specification';
+import { appendJsonPointerSegment } from './utils';
 
 const entrySuffix = '-entry-node';
 const exitSuffix = '-exit-node';
 
 const rootId = 'root';
+const portPrefix = 'port-';
 
 const doReference = '/do';
-const forReference = '/for';
 const catchReference = '/catch';
 const branchReference = '/fork/branches';
 const tryReference = '/try';
@@ -73,6 +74,8 @@ export type GraphNode = GraphElement & {
   parent?: Graph;
   /** The related task */
   task?: Task;
+  /** The task's indexed RFC 6901 JSON Pointer within the workflow document. */
+  taskReference?: string;
 };
 
 /**
@@ -122,6 +125,37 @@ export type FlatGraph = FlatGraphNode & {
 };
 
 /**
+ * The information provided to a custom task id factory when resolving a task's node id.
+ */
+export type TaskIdFactoryContext = {
+  /** The task definition. */
+  task: Task;
+  /** The task name. */
+  name: string;
+  /** The task's indexed RFC 6901 JSON Pointer within the workflow document, e.g. `/do/0/init`. */
+  reference: string;
+  /** The id of the graph the node will be added to (`root` for top-level tasks). */
+  parentId: string;
+  /** The id the builder would assign by default, e.g. `/do/init`. */
+  defaultId: string;
+};
+
+/**
+ * Options used to customize how a graph is built.
+ */
+export type GraphBuildOptions = {
+  /**
+   * Returns a custom node id for a task, or undefined to keep the default id.
+   * The factory is invoked at most once per task per build: the first resolution is cached
+   * and reused wherever the task is reached again. Returned ids must be unique across the
+   * whole graph, must not start with `port-` and must not be a root port id; the build
+   * throws otherwise. Derived ids (ports, try/catch subgraphs, child task lists) compose
+   * on the returned id, so children of a renamed container keep default ids under it.
+   */
+  taskId?: (context: TaskIdFactoryContext) => string | undefined;
+};
+
+/**
  * Context information used when processing tasks in a workflow graph.
  */
 type TaskContext = {
@@ -129,14 +163,24 @@ type TaskContext = {
   graph: Graph;
   /** The reference of the task list. */
   taskListReference: string;
+  /** The index-free, pointer-shaped path of the task list. */
+  taskListId: string;
   /** The list of sibling tasks. */
   taskList: Map<string, Task>;
   /** The current task name. */
   taskName?: string;
   /** The current reference. */
   taskReference: string;
+  /** The current stable graph node id. */
+  taskId: string;
   /** The ids of edges already visited */
   knownEdges: GraphEdge[];
+  /** The graph build options, if any. */
+  options?: GraphBuildOptions;
+  /** The resolved node ids, mapped by task reference. */
+  taskIdsByReference: Map<string, string>;
+  /** The task references, mapped by resolved node id. */
+  taskReferencesById: Map<string, string>;
 };
 
 /**
@@ -192,6 +236,7 @@ function initGraph(
   task: Task | undefined = undefined,
   label: string | undefined = undefined,
   parent: Graph | undefined = undefined,
+  taskReference: string | undefined = undefined,
 ): Graph {
   const graph: Graph = {
     id,
@@ -199,17 +244,18 @@ function initGraph(
     type,
     parent,
     task,
+    taskReference,
     nodes: [],
     edges: [],
   };
   const entryNode: GraphNode = {
     type: id === rootId ? GraphNodeType.Start : GraphNodeType.Entry,
-    id: `${id}${entrySuffix}`,
+    id: id === rootId ? `${id}${entrySuffix}` : `${portPrefix}${id}${entrySuffix}`,
     parent: graph,
   };
   const exitNode: GraphNode = {
     type: id === rootId ? GraphNodeType.End : GraphNodeType.Exit,
-    id: `${id}${exitSuffix}`,
+    id: id === rootId ? `${id}${exitSuffix}` : `${portPrefix}${id}${exitSuffix}`,
     parent: graph,
   };
   graph.entryNode = entryNode;
@@ -282,6 +328,52 @@ function getEndNode(graph: Graph): GraphNode {
 }
 
 /**
+ * Resolves the node id of a task, delegating to the custom task id factory when one is provided.
+ * The first resolution per task reference is cached and reused: `buildTaskNode` dedups revisited
+ * tasks by id, so a task must resolve to the same id however it is reached.
+ * @param context The context the task is resolved in
+ * @param parent The graph the task's node will be added to
+ * @param task The task definition
+ * @param name The task name
+ * @param reference The task's indexed RFC 6901 JSON Pointer within the workflow document
+ * @param defaultId The id the builder assigns by default
+ * @returns The resolved node id
+ */
+function resolveTaskId(
+  context: TaskContext,
+  parent: Graph,
+  task: Task,
+  name: string,
+  reference: string,
+  defaultId: string,
+): string {
+  const cached = context.taskIdsByReference.get(reference);
+  if (cached) return cached;
+  const customId = context.options?.taskId?.({ task, name, reference, parentId: parent.id, defaultId });
+  if (customId != null) {
+    if (typeof customId !== 'string' || !customId.length) {
+      throw new Error(`The task id factory returned an invalid id for task '${reference}'`);
+    }
+    if (
+      customId.startsWith(portPrefix) ||
+      customId === rootId ||
+      customId === `${rootId}${entrySuffix}` ||
+      customId === `${rootId}${exitSuffix}`
+    ) {
+      throw new Error(`The task id factory returned the reserved id '${customId}' for task '${reference}'`);
+    }
+  }
+  const id = customId ?? defaultId;
+  const knownReference = context.taskReferencesById.get(id);
+  if (knownReference !== undefined && knownReference !== reference) {
+    throw new Error(`The task id '${id}' is assigned to both tasks '${knownReference}' and '${reference}'`);
+  }
+  context.taskIdsByReference.set(reference, id);
+  context.taskReferencesById.set(id, reference);
+  return id;
+}
+
+/**
  * Builds the provided transition from the source node
  * @param sourceNode The node to build the transition from
  * @param transition The transition to follow
@@ -290,9 +382,21 @@ function getEndNode(graph: Graph): GraphNode {
 function buildTransition(sourceNode: GraphNode | Graph, transition: TransitionInfo, context: TaskContext) {
   const exitAnchor = (sourceNode as Graph).exitNode || sourceNode;
   if (transition.index != -1) {
+    const taskReference = appendJsonPointerSegment(
+      appendJsonPointerSegment(context.taskListReference, transition.index),
+      transition.name,
+    );
     const targetNode = buildTaskNode({
       ...context,
-      taskReference: `${context.taskListReference}/${transition.index}/${transition.name}`,
+      taskId: resolveTaskId(
+        context,
+        context.graph,
+        transition.task!,
+        transition.name,
+        taskReference,
+        appendJsonPointerSegment(context.taskListId, transition.name),
+      ),
+      taskReference,
       taskName: transition.name,
     });
     buildEdge(
@@ -340,7 +444,7 @@ function buildTransitions(sourceNode: GraphNode | Graph, context: TaskContext) {
  * @returns A graph or node for the provided context
  */
 function buildTaskNode(context: TaskContext): GraphNode | Graph {
-  const existingNode = context.graph.nodes.find((node) => node.id === context.taskReference);
+  const existingNode = context.graph.nodes.find((node) => node.id === context.taskId);
   if (existingNode) return existingNode;
   const task = context.taskList.get(context.taskName!);
   if (!task) throw new Error(`Unabled to find the task '${context.taskName}' in the current context`);
@@ -368,9 +472,10 @@ function buildTaskNode(context: TaskContext): GraphNode | Graph {
 function buildGenericTaskNode(task: Task, type: GraphNodeType, context: TaskContext): GraphNode {
   const node: GraphNode = {
     task,
+    taskReference: context.taskReference,
     type,
     parent: context.graph,
-    id: context.taskReference,
+    id: context.taskId,
     label: context.taskName,
   };
   context.graph.nodes.push(node);
@@ -396,10 +501,18 @@ function buildCallTaskNode(task: CallTask, context: TaskContext): GraphNode {
  * @returns A graph for the provided task
  */
 function buildDoTaskNode(task: DoTask, context: TaskContext): Graph {
-  const subgraph: Graph = initGraph(GraphNodeType.Do, context.taskReference, task, context.taskName, context.graph);
+  const subgraph: Graph = initGraph(
+    GraphNodeType.Do,
+    context.taskId,
+    task,
+    context.taskName,
+    context.graph,
+    context.taskReference,
+  );
   const doContext: TaskContext = {
     ...context,
     graph: subgraph,
+    taskListId: context.taskId + doReference,
     taskListReference: context.taskReference + doReference,
     taskList: mapTasks(task.do),
     taskName: undefined,
@@ -428,11 +541,19 @@ function buildEmitTaskNode(task: EmitTask, context: TaskContext): GraphNode {
  * @returns A graph for the provided task
  */
 function buildForTaskNode(task: ForTask, context: TaskContext): Graph {
-  const subgraph: Graph = initGraph(GraphNodeType.For, context.taskReference, task, context.taskName, context.graph);
+  const subgraph: Graph = initGraph(
+    GraphNodeType.For,
+    context.taskId,
+    task,
+    context.taskName,
+    context.graph,
+    context.taskReference,
+  );
   const forContext: TaskContext = {
     ...context,
     graph: subgraph,
-    taskListReference: subgraph.id + forReference + doReference,
+    taskListId: context.taskId + doReference,
+    taskListReference: context.taskReference + doReference,
     taskList: mapTasks(task.do),
     taskName: undefined,
   };
@@ -449,17 +570,36 @@ function buildForTaskNode(task: ForTask, context: TaskContext): Graph {
  * @returns A graph for the provided task
  */
 function buildForkTaskNode(task: ForkTask, context: TaskContext): Graph {
-  const subgraph: Graph = initGraph(GraphNodeType.Fork, context.taskReference, task, context.taskName, context.graph);
+  const subgraph: Graph = initGraph(
+    GraphNodeType.Fork,
+    context.taskId,
+    task,
+    context.taskName,
+    context.graph,
+    context.taskReference,
+  );
   for (let i = 0, c = task.fork?.branches.length || 0; i < c; i++) {
     const branchItem = task.fork?.branches[i];
     if (!branchItem) continue;
-    const [branchName] = Object.entries(branchItem)[0];
+    const [branchName, branchTask] = Object.entries(branchItem)[0];
+    const branchListId = `${context.taskId}${branchReference}`;
+    const branchListReference = `${context.taskReference}${branchReference}`;
+    const branchTaskReference = appendJsonPointerSegment(appendJsonPointerSegment(branchListReference, i), branchName);
     const branchContext: TaskContext = {
       ...context,
       graph: subgraph,
-      taskListReference: `${context.taskReference}${branchReference}`,
+      taskListId: branchListId,
+      taskListReference: branchListReference,
       taskList: mapTasks([branchItem]),
-      taskReference: `${context.taskReference}${branchReference}/${i}/${branchName}`,
+      taskId: resolveTaskId(
+        context,
+        subgraph,
+        branchTask,
+        branchName,
+        branchTaskReference,
+        appendJsonPointerSegment(branchListId, branchName),
+      ),
+      taskReference: branchTaskReference,
       taskName: branchName,
     };
     const branchNode = buildTaskNode(branchContext);
@@ -547,14 +687,15 @@ function buildSwitchTaskNode(task: SwitchTask, context: TaskContext): GraphNode 
 function buildTryCatchTaskNode(task: TryTask, context: TaskContext): Graph {
   const containerSubgraph: Graph = initGraph(
     GraphNodeType.TryCatch,
-    context.taskReference,
+    context.taskId,
     task,
     context.taskName,
     context.graph,
+    context.taskReference,
   );
   const trySubgraph: Graph = initGraph(
     GraphNodeType.Try,
-    context.taskReference + tryReference,
+    context.taskId + tryReference,
     task,
     context.taskName + ' (try)',
     containerSubgraph,
@@ -565,7 +706,8 @@ function buildTryCatchTaskNode(task: TryTask, context: TaskContext): Graph {
   const tryContext: TaskContext = {
     ...context,
     graph: trySubgraph,
-    taskListReference: trySubgraph.id,
+    taskListId: context.taskId + tryReference,
+    taskListReference: context.taskReference + tryReference,
     taskList: mapTasks(task.try),
     taskName: undefined,
   };
@@ -576,7 +718,7 @@ function buildTryCatchTaskNode(task: TryTask, context: TaskContext): Graph {
       task,
       type: GraphNodeType.Catch,
       parent: containerSubgraph,
-      id: context.taskReference + catchReference,
+      id: context.taskId + catchReference,
       label: context.taskName + ' (catch)',
     };
     containerSubgraph.nodes.push(catchNode);
@@ -587,7 +729,7 @@ function buildTryCatchTaskNode(task: TryTask, context: TaskContext): Graph {
   } else {
     const catchSubgraph: Graph = initGraph(
       GraphNodeType.Catch,
-      context.taskReference + catchReference + doReference,
+      context.taskId + catchReference + doReference,
       task,
       context.taskName + ' (catch)',
       containerSubgraph,
@@ -598,7 +740,8 @@ function buildTryCatchTaskNode(task: TryTask, context: TaskContext): Graph {
     const catchContext: TaskContext = {
       ...context,
       graph: catchSubgraph,
-      taskListReference: catchSubgraph.id,
+      taskListId: context.taskId + catchReference + doReference,
+      taskListReference: context.taskReference + catchReference + doReference,
       taskList: mapTasks(task.catch.do),
       taskName: undefined,
     };
@@ -634,13 +777,12 @@ function buildEdge(graph: Graph, knownEdges: GraphEdge[], source: GraphNode, tar
   if (edge) {
     if (label && !edge.label?.includes(label)) {
       edge.label = edge.label + (edge.label ? ' / ' : '') + label;
-      edge.id = `${source.id}-${target.id}-${edge.label}`;
     }
     return edge;
   }
   const newEdge: GraphEdge = {
     label,
-    id: `${source.id}-${target.id}${label ? `-${label}` : ''}`,
+    id: `${source.id}-${target.id}`,
     sourceId: source.id,
     targetId: target.id,
   };
@@ -654,45 +796,45 @@ function buildEdge(graph: Graph, knownEdges: GraphEdge[], source: GraphNode, tar
  * @param edges
  */
 export const remapEdges = (edges: GraphEdge[]): GraphEdge[] => {
-  let remappedEdges = [...edges.map((e) => ({ ...e }))];
-  const leadsToPort = (edge: GraphEdge) =>
-    edge.targetId !== 'root-exit-node' &&
-    (edge.targetId.endsWith('-entry-node') || edge.targetId.endsWith('-exit-node'));
-  const isPortToPort = (edge: GraphEdge) =>
-    edge.sourceId !== 'root-entry-node' &&
-    edge.targetId !== 'root-exit-node' &&
-    (edge.sourceId.endsWith('-entry-node') || edge.sourceId.endsWith('-exit-node'));
-  const edgesLeadingToPort = edges.filter((e) => leadsToPort(e) && !isPortToPort(e));
-  const remap = (lead: GraphEdge, tails: GraphEdge[]) => {
-    tails.forEach((tail) => {
-      remappedEdges = remappedEdges.filter((e) => e.id !== tail.id);
-      if (!leadsToPort(tail)) {
-        const sourceId = lead.sourceId;
-        const targetId = tail.targetId;
-        const label = `${lead.label}${lead.label && tail.label ? ' / ' : ''}${tail.label}`;
-        const id = `${sourceId}-${targetId}${label ? `-${label}` : ''}`;
-        const newEdge: GraphEdge = {
-          id,
-          sourceId,
-          targetId,
-          label,
-        };
-        remappedEdges.push(newEdge);
-      } else {
-        remap(
-          lead,
-          edges.filter((e) => e.sourceId === tail.targetId),
-        );
+  const isInnerPort = (id: string) =>
+    id.startsWith(portPrefix) && (id.endsWith(entrySuffix) || id.endsWith(exitSuffix));
+  const outgoing = edges.reduce((bySource, edge) => {
+    const sourceEdges = bySource.get(edge.sourceId) ?? [];
+    sourceEdges.push(edge);
+    bySource.set(edge.sourceId, sourceEdges);
+    return bySource;
+  }, new Map<string, GraphEdge[]>());
+  const remappedEdges: GraphEdge[] = [];
+  const appendLabel = (current: string, next: string | undefined) =>
+    `${current}${current && next ? ' / ' : ''}${next ?? ''}`;
+  const addEdge = (sourceId: string, targetId: string, label: string) => {
+    const existing = remappedEdges.find((edge) => edge.sourceId === sourceId && edge.targetId === targetId);
+    if (existing) {
+      if (label && !existing.label?.includes(label)) {
+        existing.label = appendLabel(existing.label ?? '', label);
       }
+      return;
+    }
+    remappedEdges.push({
+      id: `${sourceId}-${targetId}`,
+      sourceId,
+      targetId,
+      label,
     });
   };
-  edgesLeadingToPort.forEach((lead) => {
-    remappedEdges = remappedEdges.filter((e) => e.id !== lead.id);
-    remap(
-      lead,
-      edges.filter((e) => e.sourceId === lead.targetId),
-    );
-  });
+  const follow = (sourceId: string, edge: GraphEdge, label: string, visited: Set<GraphEdge>) => {
+    if (visited.has(edge)) return;
+    const nextVisited = new Set(visited).add(edge);
+    const nextLabel = appendLabel(label, edge.label);
+    if (!isInnerPort(edge.targetId)) {
+      addEdge(sourceId, edge.targetId, nextLabel);
+      return;
+    }
+    (outgoing.get(edge.targetId) ?? []).forEach((next) => follow(sourceId, next, nextLabel, nextVisited));
+  };
+  edges
+    .filter((edge) => !isInnerPort(edge.sourceId))
+    .forEach((edge) => follow(edge.sourceId, edge, '', new Set<GraphEdge>()));
   return remappedEdges;
 };
 
@@ -717,6 +859,7 @@ export const flattenNodes = (node: Graph | GraphNode): FlatGraphNode[] => [
     label: node.label,
     type: node.type,
     task: node.task,
+    taskReference: node.taskReference,
     parentId: node.parent?.id,
   },
   ...((node as Graph).nodes || []).flatMap(flattenNodes),
@@ -743,21 +886,43 @@ export function flattenGraph(graph: Graph, removePorts: boolean = false): FlatGr
 }
 
 /**
+ * Asserts that all node ids in the provided graph are unique.
+ * Guards against custom task ids colliding with derived ids (ports, try/catch subgraphs).
+ * @param graph The graph to check
+ */
+function assertUniqueNodeIds(graph: Graph): void {
+  const knownIds = new Set<string>();
+  graph.nodes.flatMap(flattenNodes).forEach(({ id }) => {
+    if (knownIds.has(id)) {
+      throw new Error(`Duplicate node id '${id}' produced with the provided task id factory`);
+    }
+    knownIds.add(id);
+  });
+}
+
+/**
  * Constructs a graph representation based on the given workflow.
  *
  * @param workflow The workflow to be converted into a graph structure.
+ * @param options The options used to customize how the graph is built.
  * @returns A graph representation of the workflow.
  */
-export function buildGraph(workflow: Workflow): Graph {
+export function buildGraph(workflow: Workflow, options?: GraphBuildOptions): Graph {
   const graph = initGraph(GraphNodeType.Root);
   if (!graph.entryNode) throw new Error('The root graph should have an entry node.');
   buildTransitions(graph.entryNode, {
     graph,
+    taskListId: doReference,
     taskListReference: doReference,
     taskList: mapTasks(workflow.do),
+    taskId: doReference,
     taskReference: doReference,
     knownEdges: [],
+    options,
+    taskIdsByReference: new Map<string, string>(),
+    taskReferencesById: new Map<string, string>(),
   });
+  if (options?.taskId) assertUniqueNodeIds(graph);
   return graph;
 }
 
@@ -766,9 +931,62 @@ export function buildGraph(workflow: Workflow): Graph {
  *
  * @param workflow The workflow to be converted into a flattened graph structure.
  * @param removePorts A boolean indicating whether the port nodes should be removed.
+ * @param options The options used to customize how the graph is built.
  * @returns A flattened graph representation of the workflow.
  */
-export function buildFlatGraph(workflow: Workflow, removePorts: boolean = false): FlatGraph {
-  const graph = buildGraph(workflow);
+export function buildFlatGraph(
+  workflow: Workflow,
+  removePorts: boolean = false,
+  options?: GraphBuildOptions,
+): FlatGraph {
+  const graph = buildGraph(workflow, options);
   return flattenGraph(graph, removePorts);
+}
+
+/**
+ * Returns all nodes in a hierarchical or flat graph without copying them.
+ * @param graph The graph to traverse
+ * @returns The root and all descendant nodes
+ */
+function getGraphNodes(graph: Graph | FlatGraph): Array<GraphNode | FlatGraphNode> {
+  const nodes: Array<GraphNode | FlatGraphNode> = [];
+  const visit = (node: GraphNode | FlatGraphNode | Graph | FlatGraph) => {
+    nodes.push(node);
+    const children = (node as Graph | FlatGraph).nodes;
+    if (Array.isArray(children)) children.forEach(visit);
+  };
+  visit(graph);
+  return nodes;
+}
+
+/**
+ * Gets the node whose task reference exactly matches the supplied indexed RFC 6901 JSON Pointer.
+ * @param graph The hierarchical or flat graph to search
+ * @param taskReference The task reference to find
+ * @returns The matching node, if any
+ */
+export function getNodeByTaskReference(
+  graph: Graph | FlatGraph,
+  taskReference: string,
+): GraphNode | FlatGraphNode | undefined {
+  return getGraphNodes(graph).find((node) => node.taskReference === taskReference);
+}
+
+/**
+ * Gets the deepest task node whose task reference contains the supplied workflow pointer.
+ * DSL validation errors expose their pointer through `WorkflowValidationError.path`; schema validation
+ * errors expose pointers through each `SchemaValidationError.schemaErrors[].instancePath`.
+ * Pointers above task granularity (e.g. a `TaskItem` at `/do/0` or a task list at `/do`) have no
+ * owning task node and resolve to `undefined`.
+ * @param graph The hierarchical or flat graph to search
+ * @param pointer The indexed RFC 6901 JSON Pointer to locate
+ * @returns The nearest owning task node, if any
+ */
+export function getNodeAtPointer(graph: Graph | FlatGraph, pointer: string): GraphNode | FlatGraphNode | undefined {
+  return getGraphNodes(graph)
+    .filter(
+      (node): node is (GraphNode | FlatGraphNode) & { taskReference: string } =>
+        !!node.taskReference && (pointer === node.taskReference || pointer.startsWith(`${node.taskReference}/`)),
+    )
+    .sort((left, right) => right.taskReference.length - left.taskReference.length)[0];
 }

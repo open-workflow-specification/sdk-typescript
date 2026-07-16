@@ -33,7 +33,7 @@ import { getLifecycleHooks } from '../../lifecycle-hooks';
 import { validate } from '../../validation';
 import { isObject } from '../../utils';
 import * as yaml from 'js-yaml';
-import { buildGraph, Graph } from '../../graph-builder';
+import { buildGraph, Graph, GraphBuildOptions } from '../../graph-builder';
 import { convertToMermaidCode } from '../../mermaid-converter';
 
 /**
@@ -114,8 +114,8 @@ export class Workflow extends ObjectHydrator<Specification.Workflow> {
     return yaml.dump(normalized);
   }
 
-  static toGraph(model: Partial<WorkflowIntersection>): Graph {
-    return buildGraph(model as unknown as WorkflowIntersection);
+  static toGraph(model: Partial<WorkflowIntersection>, options?: GraphBuildOptions): Graph {
+    return buildGraph(model as unknown as WorkflowIntersection, options);
   }
 
   static toMermaidCode(model: Partial<WorkflowIntersection>): string {
@@ -134,10 +134,11 @@ export class Workflow extends ObjectHydrator<Specification.Workflow> {
 
   /**
    * Creates a directed graph representation of the workflow
+   * @param options The options used to customize how the graph is built, e.g. to provide custom node ids
    * @returns A directed graph of the workflow
    */
-  toGraph(): Graph {
-    return Workflow.toGraph(this as unknown as WorkflowIntersection);
+  toGraph(options?: GraphBuildOptions): Graph {
+    return Workflow.toGraph(this as unknown as WorkflowIntersection, options);
   }
 
   /**
@@ -169,9 +170,10 @@ export const _Workflow = Workflow as WorkflowConstructor & {
   /**
    * Creates a directed graph representation of the provided workflow
    * @param workflow The workflow to convert
+   * @param options The options used to customize how the graph is built, e.g. to provide custom node ids
    * @returns A directed graph of the provided workflow
    */
-  toGraph(workflow: Partial<WorkflowIntersection>): Graph;
+  toGraph(workflow: Partial<WorkflowIntersection>, options?: GraphBuildOptions): Graph;
 
   /**
    * Generates the MermaidJS code corresponding to the provided workflow

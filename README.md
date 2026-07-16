@@ -322,6 +322,42 @@ const flatGraph = buildFlatGraph(workflow);
 // const flatGraphWithoutPorts = buildFlatGraph(workflow, true);
 ```
 
+Task node IDs are pointer-shaped qualified paths built from task names, without `TaskList` array indexes. For
+example, a task at `/do/0/step1` has the stable graph ID `/do/step1`. Inserting, removing, or reordering sibling
+tasks therefore does not change the IDs of unaffected nodes. Renaming a task or moving it to another task list does
+change its ID. Non-root entry and exit ports use a `port-` prefix so their IDs cannot collide with task IDs. Edge
+IDs are derived from their endpoint node IDs only, so editing an `if` condition or renaming a `switch` case changes
+an edge's `label` but not its identity.
+
+Each task node also exposes its exact indexed RFC 6901 pointer through `taskReference`. Use that property to
+correlate a graph with runtime task references or validation pointers from the same workflow revision:
+
+```typescript
+import { getNodeAtPointer, getNodeByTaskReference } from '@openworkflowspec/sdk';
+
+const taskNode = getNodeByTaskReference(graph, '/do/0/step1');
+const invalidTaskNode = getNodeAtPointer(graph, '/do/0/step1/set/variable');
+```
+
+`WorkflowValidationError.path` can be passed to `getNodeAtPointer`. For `SchemaValidationError`, pass the
+`instancePath` from each entry in `schemaErrors`.
+
+If you maintain persistent task identities of your own — for example an editor that must keep node identity across
+task renames — you can supply them through the `taskId` factory in the build options, accepted by `buildGraph`,
+`buildFlatGraph` and `toGraph`:
+
+```typescript
+const graph = buildGraph(workflow, {
+  taskId: ({ reference, defaultId }) => myIdsByPointer.get(reference) ?? defaultId,
+});
+```
+
+The factory receives the task, its name, its indexed `reference`, the containing graph's `parentId` and the
+`defaultId` the builder would assign; returning `undefined` keeps the default. It is invoked at most once per task
+per build, and the returned IDs must be unique — the build throws on duplicates instead of silently merging nodes.
+IDs starting with `port-` and the root port IDs are reserved. Derived IDs compose on the custom ID: a renamed
+container's ports and children keep default IDs under it (e.g. `my-id/do/child`).
+
 #### Generate a MermaidJS flowchart
 
 Generating a [MermaidJS](https://mermaid.js.org/) flowchart can be achieved in two ways: using the `convertToMermaidCode`, the legacy `MermaidDiagram` class, or alternatives:
@@ -355,11 +391,11 @@ const mermaidCode = convertToMermaidCode(workflow); /* or  */
 // const mermaidCode = Classes.Workflow.toMermaidCode(workflow);
 /*
 flowchart TD
-    root-entry-node(( ))
-    root-exit-node((( )))
-    /do/0/step1["step1"]
-    /do/0/step1 --> root-exit-node
-    root-entry-node --> /do/0/step1
+    n0(( ))
+    n1((( )))
+    n2["step1"]
+    n2 --> n1
+    n0 --> n2
 
 
 classDef hidden width: 1px, height: 0px, opacity: 0;
@@ -368,15 +404,19 @@ classDef hidden width: 1px, height: 0px, opacity: 0;
 
 ```mermaid
 flowchart TD
-    root-entry-node(( ))
-    root-exit-node((( )))
-    /do/0/step1["step1"]
-    /do/0/step1 --> root-exit-node
-    root-entry-node --> /do/0/step1
+    n0(( ))
+    n1((( )))
+    n2["step1"]
+    n2 --> n1
+    n0 --> n2
 
 
 classDef hidden width: 1px, height: 0px, opacity: 0;
 ```
+
+Mermaid nodes are declared under renderer-local aliases (`n0`, `n1`, ...) rather than graph node IDs, so the
+diagram stays valid whatever characters task names contain. Use the graph API (`buildGraph`, `buildFlatGraph`)
+when you need addressable node identities.
 
 You can refer to the Mermaid browser examples for a live demo. The browser samples under [`examples/browser`](./examples/browser) include native ESM examples and legacy UMD-global examples under [`examples/browser/umd`](./examples/browser/umd).
 

@@ -33,6 +33,23 @@ export const isObject = <T>(value: T): value is T & object => {
 export const deepCopy = <T>(obj: T): T => JSON.parse(JSON.stringify(obj));
 
 /**
+ * Escapes a JSON Pointer segment according to RFC 6901.
+ * @param segment The raw property name, record key, or array index
+ * @returns The escaped segment
+ */
+export const escapeJsonPointerSegment = (segment: string | number): string =>
+  typeof segment === 'number' ? String(segment) : segment.replace(/~/g, '~0').replace(/\//g, '~1');
+
+/**
+ * Appends a segment to an RFC 6901 JSON Pointer or pointer-shaped path.
+ * @param base The base pointer or path
+ * @param segment The segment to append
+ * @returns The extended pointer or path
+ */
+export const appendJsonPointerSegment = (base: string, segment: string | number): string =>
+  `${base}/${escapeJsonPointerSegment(segment)}`;
+
+/**
  * Checks the provided array is an array
  * @param arr
  * @returns

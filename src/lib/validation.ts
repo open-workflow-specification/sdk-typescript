@@ -19,7 +19,7 @@ import Ajv, { ValidateFunction } from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';
 import workflowSchema from './generated/schema/workflow.json';
 import { ChildType, childTypes, validationPointers } from './generated/validation';
-import { deepCopy, isObject } from './utils';
+import { appendJsonPointerSegment, deepCopy, isObject } from './utils';
 import { getLifecycleHooks } from './lifecycle-hooks';
 import { Specification } from './generated/definitions';
 import { DslValidationError, SchemaValidationError, WorkflowValidationError } from './errors';
@@ -41,22 +41,6 @@ const validators: Map<string, ValidateFunction> = new Map<string, ValidateFuncti
     return [typeName, validate as ValidateFunction];
   }),
 );
-
-/**
- * Escapes a JSON Pointer segment per RFC 6901 (`~` -> `~0`, `/` -> `~1`); numbers are array indices.
- * @param segment The raw property name, record key or array index
- * @returns The escaped segment
- */
-const escapeSegment = (segment: string | number): string =>
-  typeof segment === 'number' ? String(segment) : segment.replace(/~/g, '~0').replace(/\//g, '~1');
-
-/**
- * Appends a segment to a RFC 6901 JSON Pointer.
- * @param base The base pointer ('' for the root)
- * @param segment The segment to append
- * @returns The extended pointer
- */
-const appendPointer = (base: string, segment: string | number): string => `${base}/${escapeSegment(segment)}`;
 
 /**
  * Renders a JSON Pointer for display in an error message, labelling the root explicitly.
@@ -177,7 +161,7 @@ const validateDescendants = (
       if (childNode == null) {
         continue;
       }
-      const childPath = segments.reduce(appendPointer, path);
+      const childPath = segments.reduce(appendJsonPointerSegment, path);
       const hooks = getLifecycleHooks(child.type);
       withValidationContext(child.type, childPath, () => {
         hooks?.preValidation?.(childNode, workflow);

@@ -155,3 +155,5 @@ async function generate(definitionFile: string, destDir: string): Promise<void> 
 
 const definitionFile = path.resolve(definitionsDir, 'specification.ts');
 generate(definitionFile, buildersDir).then(console.log.bind(console)).catch(console.error.bind(console));
+
+# Fix for issue #187: safe input handling

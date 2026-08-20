@@ -100,18 +100,18 @@ export type DeserializationOptions = ValidationOptions;
  * @param options The SDK's YAML output options
  * @returns The equivalent js-yaml dump options
  */
-export const toYamlDumpOptions = (options: YamlSerializationOptions = {}): DumpOptions => {
+export const toYamlDumpOptions = (options?: YamlSerializationOptions | null): DumpOptions => {
   const dumpOptions: DumpOptions = {};
-  if (options.indent != null) {
+  if (options?.indent != null) {
     dumpOptions.indent = Math.max(1, options.indent);
   }
-  if (options.lineWidth != null) {
+  if (options?.lineWidth != null) {
     dumpOptions.lineWidth = options.lineWidth;
   }
-  if (options.sortKeys != null) {
+  if (options?.sortKeys != null) {
     dumpOptions.sortKeys = options.sortKeys;
   }
-  if (options.flowLevel != null) {
+  if (options?.flowLevel != null) {
     dumpOptions.flowLevel = options.flowLevel;
   }
   return dumpOptions;
@@ -121,14 +121,20 @@ export const toYamlDumpOptions = (options: YamlSerializationOptions = {}): DumpO
  * Normalizes the arguments of `serialize` into a single options object, accepting both the current
  * options payload and the deprecated positional form.
  *
+ * The positional form is recognized by the absence of an options payload rather than by the presence
+ * of a format, because the format was optional there: `serialize(undefined, false)` is a legacy call
+ * that asks not to normalize, and reading it as an empty payload would silently normalize anyway.
+ *
  * @param formatOrOptions The serialization options, or the deprecated positional format argument
  * @param legacyNormalize The deprecated positional normalize argument, only read for the positional form
  * @returns The equivalent serialization options
  */
 export const toSerializationOptions = (
-  formatOrOptions?: 'yaml' | 'json' | SerializationOptions,
+  formatOrOptions?: 'yaml' | 'json' | SerializationOptions | null,
   legacyNormalize?: boolean,
-): SerializationOptions =>
-  typeof formatOrOptions === 'string'
-    ? { format: formatOrOptions, normalize: legacyNormalize }
-    : (formatOrOptions ?? {});
+): SerializationOptions => {
+  if (formatOrOptions != null && typeof formatOrOptions !== 'string') {
+    return formatOrOptions;
+  }
+  return { format: formatOrOptions ?? undefined, normalize: legacyNormalize };
+};

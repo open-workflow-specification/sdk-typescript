@@ -116,9 +116,8 @@ export class Workflow extends ObjectHydrator<Specification.Workflow> {
     if (options?.validate ?? true) {
       validate('Workflow', model);
     } else if (!isObject(model)) {
-      throw new Error(
-        `The provided text does not describe a workflow: expected a mapping, got ${Array.isArray(model) ? 'a sequence' : typeof model}`,
-      );
+      const actual = model === null ? 'null' : Array.isArray(model) ? 'a sequence' : `a ${typeof model}`;
+      throw new Error(`The provided text does not describe a workflow: expected a mapping, got ${actual}`);
     }
     return new Workflow(model) as WorkflowIntersection;
   }

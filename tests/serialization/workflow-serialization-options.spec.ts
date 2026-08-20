@@ -20,7 +20,12 @@ import * as yaml from 'js-yaml';
 import { Specification } from '../../src/lib/generated/definitions';
 import { Classes } from '../../src/lib/generated/classes';
 import { DslValidationError, SchemaValidationError, WorkflowValidationError } from '../../src/lib/errors';
-import { DeserializationOptions, SerializationOptions } from '../../src/lib/serialization';
+import {
+  DeserializationOptions,
+  SerializationOptions,
+  toSerializationOptions,
+  toYamlDumpOptions,
+} from '../../src/lib/serialization';
 
 import { schemaVersion } from '../../package.json';
 
@@ -223,6 +228,25 @@ describe('Workflow serialization - legacy positional signature', () => {
     expect(Classes.Workflow.serialize(workflow, format)).toBe(workflow.serialize());
     expect(workflow.serialize(format, false)).toBe(workflow.serialize({ normalize: false }));
   });
+
+  /**
+   * Asserted on the normalizer rather than through serialize, because no normalize lifecycle hook is
+   * registered for Workflow: normalizing is currently a no-op, so comparing serialized output cannot
+   * tell whether the flag survived the conversion.
+   */
+  it('should carry every positional argument into the options payload', () => {
+    expect(toSerializationOptions()).toStrictEqual({ format: undefined, normalize: undefined });
+    expect(toSerializationOptions('json')).toStrictEqual({ format: 'json', normalize: undefined });
+    expect(toSerializationOptions('json', false)).toStrictEqual({ format: 'json', normalize: false });
+    expect(toSerializationOptions(undefined, false)).toStrictEqual({ format: undefined, normalize: false });
+    expect(toSerializationOptions(null, false)).toStrictEqual({ format: undefined, normalize: false });
+  });
+
+  it('should pass an options payload through untouched', () => {
+    const options: SerializationOptions = { format: 'json', normalize: false, validate: false };
+    expect(toSerializationOptions(options)).toBe(options);
+    expect(toSerializationOptions({})).toStrictEqual({});
+  });
 });
 
 /**
@@ -251,6 +275,13 @@ describe('Workflow (de)serialization - null and missing options', () => {
       minimalWorkflow,
     );
   });
+
+  it('should accept a null yaml sub-block', () => {
+    const workflow = new Classes.Workflow(minimalWorkflow);
+    expect(toYamlDumpOptions(null)).toStrictEqual({});
+    expect(toYamlDumpOptions()).toStrictEqual({});
+    expect(workflow.serialize({ yaml: null } as unknown as SerializationOptions)).toBe(workflow.serialize());
+  });
 });
 
 /**
@@ -258,17 +289,17 @@ describe('Workflow (de)serialization - null and missing options', () => {
  * a scalar or a sequence would deserialize into a blank Workflow and lose the caller's document.
  */
 describe('Workflow deserialization - non-mapping documents', () => {
-  const documents: Array<{ name: string; text: string }> = [
-    { name: 'a scalar string', text: 'just a string' },
-    { name: 'a number', text: '42' },
-    { name: 'a sequence', text: '- a\n- b' },
-    { name: 'an explicit null', text: 'null' },
+  const documents: Array<{ name: string; text: string; reported: string }> = [
+    { name: 'a scalar string', text: 'just a string', reported: 'a string' },
+    { name: 'a number', text: '42', reported: 'a number' },
+    { name: 'a sequence', text: '- a\n- b', reported: 'a sequence' },
+    { name: 'an explicit null', text: 'null', reported: 'null' },
   ];
 
-  for (const { name, text } of documents) {
-    it(`should refuse to deserialize ${name}, even with validation off`, () => {
+  for (const { name, text, reported } of documents) {
+    it(`should refuse to deserialize ${name}, even with validation off, and say so`, () => {
       expect(() => Classes.Workflow.deserialize(text, { validate: false })).toThrow(
-        /does not describe a workflow: expected a mapping/,
+        `The provided text does not describe a workflow: expected a mapping, got ${reported}`,
       );
     });
 

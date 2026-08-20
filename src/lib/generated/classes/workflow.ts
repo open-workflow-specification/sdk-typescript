@@ -94,12 +94,28 @@ export class Workflow extends ObjectHydrator<Specification.Workflow> {
     return getLifecycleHooks('Workflow')?.normalize?.(copy) || copy;
   }
 
+  /**
+   * Deserializes the provided string as a Workflow
+   * @param text The YAML or JSON representation of a workflow
+   * @returns A new Workflow instance
+   */
   static deserialize(text: string): WorkflowIntersection {
     const model = yaml.load(text) as Partial<Specification.Workflow>;
     validate('Workflow', model);
     return new Workflow(model) as WorkflowIntersection;
   }
 
+  /**
+   * Serializes the provided workflow to YAML or JSON.
+   *
+   * Both formats serialize the same plain representation of the document, obtained via
+   * `asPlainObject()`: js-yaml cannot dump hydrated class instances. See issue #308.
+   *
+   * @param model The workflow to serialize
+   * @param format The format, 'yaml' or 'json', default is 'yaml'
+   * @param normalize If the workflow should be normalized before serialization, default true
+   * @returns A string representation of the workflow
+   */
   static serialize(
     model: Partial<WorkflowIntersection>,
     format: 'yaml' | 'json' = 'yaml',
@@ -107,17 +123,25 @@ export class Workflow extends ObjectHydrator<Specification.Workflow> {
   ): string {
     const workflow = new Workflow(model);
     workflow.validate();
-    const normalized = normalize ? workflow.normalize() : workflow;
-    if (format === 'json') {
-      return JSON.stringify(normalized);
-    }
-    return yaml.dump(normalized);
+    const plainWorkflow = (normalize ? workflow.normalize() : workflow).asPlainObject();
+    return format === 'json' ? JSON.stringify(plainWorkflow) : yaml.dump(plainWorkflow);
   }
 
+  /**
+   * Creates a directed graph representation of the provided workflow
+   * @param model The workflow to convert
+   * @param options The options used to customize how the graph is built, e.g. to provide custom node ids
+   * @returns A directed graph of the provided workflow
+   */
   static toGraph(model: Partial<WorkflowIntersection>, options?: GraphBuildOptions): Graph {
     return buildGraph(model as unknown as WorkflowIntersection, options);
   }
 
+  /**
+   * Generates the MermaidJS code corresponding to the provided workflow
+   * @param model The workflow to convert
+   * @returns The MermaidJS code
+   */
   static toMermaidCode(model: Partial<WorkflowIntersection>): string {
     return convertToMermaidCode(model as unknown as WorkflowIntersection);
   }

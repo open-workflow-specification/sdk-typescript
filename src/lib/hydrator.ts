@@ -56,19 +56,26 @@ export class ArrayHydrator<T> extends Array<T> {
    * Instanciates a new instance of the ArrayHydrator class.
    * Copies the elements of the provided model onto the instance if it is an array.
    *
-   * @param model - Optional array or number to initialize the instance.
+   * Discriminates on the model's runtime type rather than on its numeric coercion. `Number([])` is 0
+   * and `Number(['5'])` is 5, so an isNaN based test routed empty and single element arrays into the
+   * `Array(length)` constructor, hydrating `[]` as `[[]]` and `null` as `[null]`. The elements are
+   * assigned by index rather than spread as arguments, which would exceed the engine's argument limit
+   * for a large model.
+   *
+   * @param model - Optional array to copy, or a number to preallocate the instance's length.
    */
   constructor(model?: Array<T> | number) {
-    if (!isNaN(model as number)) {
-      super(model as number);
+    if (model == null) {
+      super();
+    } else if (typeof model === 'number') {
+      super(model);
+    } else if (Array.isArray(model)) {
+      super(model.length);
+      model.forEach((item, index) => {
+        this[index] = item;
+      });
     } else {
-      super(...((model as Array<T>) || []));
-      if (!model) {
-        model = [];
-      }
-      if (!Array.isArray(model)) {
-        throw new Error('The provided model should be an array');
-      }
+      throw new Error('The provided model should be an array');
     }
   }
 }

@@ -34,7 +34,7 @@
         try {
           workflow.validate();
           document.getElementById('output').innerHTML =
-            `--- YAML ---\n${workflow.serialize()}\n\n--- JSON ---\n${workflow.serialize('json')}`;
+            `--- YAML ---\n${workflow.serialize()}\n\n--- JSON ---\n${workflow.serialize({ format: 'json' })}`;
         } catch (ex) {
           console.error('Invalid workflow', ex);
         }

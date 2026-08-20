@@ -33,7 +33,7 @@
         try {
           validate('Workflow', workflowDefinition);
           document.getElementById('output').innerHTML =
-            `--- YAML ---\n${Classes.Workflow.serialize(workflowDefinition)}\n\n--- JSON ---\n${Classes.Workflow.serialize(workflowDefinition, 'json')}`;
+            `--- YAML ---\n${Classes.Workflow.serialize(workflowDefinition)}\n\n--- JSON ---\n${Classes.Workflow.serialize(workflowDefinition, { format: 'json' })}`;
         } catch (ex) {
           console.error('Invalid workflow', ex);
         }

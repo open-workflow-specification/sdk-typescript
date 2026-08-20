@@ -48,10 +48,3 @@ export const escapeJsonPointerSegment = (segment: string | number): string =>
  */
 export const appendJsonPointerSegment = (base: string, segment: string | number): string =>
   `${base}/${escapeJsonPointerSegment(segment)}`;
-
-/**
- * Checks the provided array is an array
- * @param arr
- * @returns
- */
-export const isArray = <T>(arr: Array<T> | number | undefined): arr is Array<T> => !!arr && isNaN(arr as number);

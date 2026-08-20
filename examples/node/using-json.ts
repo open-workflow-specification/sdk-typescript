@@ -19,4 +19,4 @@ const myJsonWorkflow = `
   ]
 }`;
 const workflow = Classes.Workflow.deserialize(myJsonWorkflow);
-console.log(`--- YAML ---\n${workflow.serialize()}\n\n--- JSON ---\n${workflow.serialize('json')}`);
+console.log(`--- YAML ---\n${workflow.serialize()}\n\n--- JSON ---\n${workflow.serialize({ format: 'json' })}`);

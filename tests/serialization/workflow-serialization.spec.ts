@@ -189,7 +189,7 @@ describe('Workflow (de)serialization', () => {
   it('should deserialize JSON', () => {
     const workflow = Classes.Workflow.deserialize(JSON.stringify(minimalWorkflow));
     expect(workflow).toBeInstanceOf(Classes.Workflow);
-    expect(workflow.serialize('json')).toBe(JSON.stringify(minimalWorkflow));
+    expect(workflow.serialize({ format: 'json' })).toBe(JSON.stringify(minimalWorkflow));
   });
 
   it('should deserialize YAML', () => {
@@ -204,41 +204,45 @@ do:
       set:
         foo: bar`);
     expect(workflow).toBeInstanceOf(Classes.Workflow);
-    expect(workflow.serialize('json')).toBe(JSON.stringify(minimalWorkflow));
+    expect(workflow.serialize({ format: 'json' })).toBe(JSON.stringify(minimalWorkflow));
   });
 
   it('should serialize as JSON from static method', () => {
     const workflow = new Classes.Workflow(minimalWorkflow);
-    expect(Classes.Workflow.serialize(workflow, 'json')).toEqual(JSON.stringify(minimalWorkflow));
+    expect(Classes.Workflow.serialize(workflow, { format: 'json' })).toEqual(JSON.stringify(minimalWorkflow));
   });
 
   it('should serialize as JSON from instance method', () => {
     const workflow = new Classes.Workflow(minimalWorkflow);
-    expect(workflow.serialize('json')).toEqual(JSON.stringify(minimalWorkflow));
+    expect(workflow.serialize({ format: 'json' })).toEqual(JSON.stringify(minimalWorkflow));
   });
 
   it('should serialize as JSON from static method from fluently built workflow', () => {
     const workflow = buildMinimalWorkflow();
-    expect(Classes.Workflow.serialize(workflow, 'json')).toEqual(JSON.stringify(workflow));
+    expect(Classes.Workflow.serialize(workflow, { format: 'json' })).toEqual(JSON.stringify(workflow));
   });
 });
 
 describe('Workflow serialization - YAML format', () => {
   it('should serialize to YAML by default from the instance method', () => {
     const workflow = new Classes.Workflow(minimalWorkflow);
-    expectFormatsToAgree(workflow.serialize(), workflow.serialize('json'), minimalWorkflow);
+    expectFormatsToAgree(workflow.serialize(), workflow.serialize({ format: 'json' }), minimalWorkflow);
   });
 
   it('should serialize to YAML when the format is explicitly set to yaml', () => {
     const workflow = new Classes.Workflow(minimalWorkflow);
-    expectFormatsToAgree(workflow.serialize('yaml'), workflow.serialize('json'), minimalWorkflow);
+    expectFormatsToAgree(
+      workflow.serialize({ format: 'yaml' }),
+      workflow.serialize({ format: 'json' }),
+      minimalWorkflow,
+    );
   });
 
   it('should serialize to YAML by default from the static method given a class instance', () => {
     const workflow = new Classes.Workflow(minimalWorkflow);
     expectFormatsToAgree(
       Classes.Workflow.serialize(workflow),
-      Classes.Workflow.serialize(workflow, 'json'),
+      Classes.Workflow.serialize(workflow, { format: 'json' }),
       minimalWorkflow,
     );
   });
@@ -246,14 +250,14 @@ describe('Workflow serialization - YAML format', () => {
   it('should serialize to YAML by default from the static method given a plain object', () => {
     expectFormatsToAgree(
       Classes.Workflow.serialize(minimalWorkflow),
-      Classes.Workflow.serialize(minimalWorkflow, 'json'),
+      Classes.Workflow.serialize(minimalWorkflow, { format: 'json' }),
       minimalWorkflow,
     );
   });
 
   it('should serialize a fluently built workflow to YAML', () => {
     const workflow = buildMinimalWorkflow();
-    expectFormatsToAgree(workflow.serialize(), workflow.serialize('json'), minimalWorkflow);
+    expectFormatsToAgree(workflow.serialize(), workflow.serialize({ format: 'json' }), minimalWorkflow);
   });
 
   it('should emit block-style YAML with the same key order as the JSON output', () => {
@@ -274,7 +278,7 @@ do:
 
   it('should serialize a multi-task workflow with switch, try/catch, fork, nested for and timeout to YAML', () => {
     const workflow = new Classes.Workflow(complexWorkflow);
-    expectFormatsToAgree(workflow.serialize(), workflow.serialize('json'), complexWorkflow);
+    expectFormatsToAgree(workflow.serialize(), workflow.serialize({ format: 'json' }), complexWorkflow);
   });
 
   it('should preserve the types of YAML-ambiguous scalars', () => {
@@ -324,33 +328,39 @@ do:
     const workflow = new Classes.Workflow(complexWorkflow);
     const roundTripped = Classes.Workflow.deserialize(workflow.serialize());
     expect(roundTripped).toBeInstanceOf(Classes.Workflow);
-    expect(roundTripped.serialize('json')).toBe(workflow.serialize('json'));
+    expect(roundTripped.serialize({ format: 'json' })).toBe(workflow.serialize({ format: 'json' }));
   });
 });
 
 describe('Workflow serialization - normalize flag', () => {
   it('should serialize without normalizing when normalize is false (static method)', () => {
     const workflow = new Classes.Workflow(minimalWorkflow);
-    expect(JSON.parse(Classes.Workflow.serialize(workflow, 'json', false))).toMatchObject(minimalWorkflow);
+    expect(JSON.parse(Classes.Workflow.serialize(workflow, { format: 'json', normalize: false }))).toMatchObject(
+      minimalWorkflow,
+    );
   });
 
   it('should serialize without normalizing when normalize is false (instance method)', () => {
     const workflow = new Classes.Workflow(minimalWorkflow);
-    expect(JSON.parse(workflow.serialize('json', false))).toMatchObject(minimalWorkflow);
+    expect(JSON.parse(workflow.serialize({ format: 'json', normalize: false }))).toMatchObject(minimalWorkflow);
   });
 
   it('should serialize to YAML without normalizing when normalize is false (static method)', () => {
     const workflow = new Classes.Workflow(complexWorkflow);
     expectFormatsToAgree(
-      Classes.Workflow.serialize(workflow, 'yaml', false),
-      Classes.Workflow.serialize(workflow, 'json', false),
+      Classes.Workflow.serialize(workflow, { format: 'yaml', normalize: false }),
+      Classes.Workflow.serialize(workflow, { format: 'json', normalize: false }),
       complexWorkflow,
     );
   });
 
   it('should serialize to YAML without normalizing when normalize is false (instance method)', () => {
     const workflow = new Classes.Workflow(complexWorkflow);
-    expectFormatsToAgree(workflow.serialize('yaml', false), workflow.serialize('json', false), complexWorkflow);
+    expectFormatsToAgree(
+      workflow.serialize({ format: 'yaml', normalize: false }),
+      workflow.serialize({ format: 'json', normalize: false }),
+      complexWorkflow,
+    );
   });
 });
 

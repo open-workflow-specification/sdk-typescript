@@ -33,7 +33,7 @@
       }`;
         const workflow = Workflow.deserialize(myJsonWorkflow);
         document.getElementById('output').innerHTML =
-          `--- YAML ---\n${workflow.serialize()}\n\n--- JSON ---\n${workflow.serialize('json')}`;
+          `--- YAML ---\n${workflow.serialize()}\n\n--- JSON ---\n${workflow.serialize({ format: 'json' })}`;
       })();
     </script>
   </body>

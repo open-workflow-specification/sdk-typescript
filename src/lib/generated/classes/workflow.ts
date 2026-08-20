@@ -33,6 +33,12 @@ import { getLifecycleHooks } from '../../lifecycle-hooks';
 import { validate } from '../../validation';
 import { isObject } from '../../utils';
 import * as yaml from 'js-yaml';
+import {
+  DeserializationOptions,
+  SerializationOptions,
+  toSerializationOptions,
+  toYamlDumpOptions,
+} from '../../serialization';
 import { buildGraph, Graph, GraphBuildOptions } from '../../graph-builder';
 import { convertToMermaidCode } from '../../mermaid-converter';
 
@@ -95,13 +101,25 @@ export class Workflow extends ObjectHydrator<Specification.Workflow> {
   }
 
   /**
-   * Deserializes the provided string as a Workflow
+   * Deserializes the provided string as a Workflow.
+   *
+   * When validation is skipped, the parsed document is still checked to be a mapping: hydration
+   * ignores anything else, so a scalar or a sequence would otherwise yield a blank Workflow rather
+   * than an error. See issue #309.
+   *
    * @param text The YAML or JSON representation of a workflow
+   * @param options The deserialization options, e.g. to opt out of validation
    * @returns A new Workflow instance
    */
-  static deserialize(text: string): WorkflowIntersection {
+  static deserialize(text: string, options?: DeserializationOptions): WorkflowIntersection {
     const model = yaml.load(text) as Partial<Specification.Workflow>;
-    validate('Workflow', model);
+    if (options?.validate ?? true) {
+      validate('Workflow', model);
+    } else if (!isObject(model)) {
+      throw new Error(
+        `The provided text does not describe a workflow: expected a mapping, got ${Array.isArray(model) ? 'a sequence' : typeof model}`,
+      );
+    }
     return new Workflow(model) as WorkflowIntersection;
   }
 
@@ -112,19 +130,38 @@ export class Workflow extends ObjectHydrator<Specification.Workflow> {
    * `asPlainObject()`: js-yaml cannot dump hydrated class instances. See issue #308.
    *
    * @param model The workflow to serialize
+   * @param options The serialization options, e.g. the format or whether to validate
+   * @returns A string representation of the workflow
+   */
+  static serialize(model: Partial<WorkflowIntersection>, options?: SerializationOptions): string;
+
+  /**
+   * Serializes the provided workflow to YAML or JSON
+   * @deprecated Pass a `SerializationOptions` object instead, e.g. `serialize(workflow, { format: 'json' })`
+   * @param model The workflow to serialize
    * @param format The format, 'yaml' or 'json', default is 'yaml'
    * @param normalize If the workflow should be normalized before serialization, default true
    * @returns A string representation of the workflow
    */
+  static serialize(model: Partial<WorkflowIntersection>, format?: 'yaml' | 'json', normalize?: boolean): string;
+
   static serialize(
     model: Partial<WorkflowIntersection>,
-    format: 'yaml' | 'json' = 'yaml',
-    normalize: boolean = true,
+    formatOrOptions?: 'yaml' | 'json' | SerializationOptions,
+    legacyNormalize?: boolean,
   ): string {
+    const options = toSerializationOptions(formatOrOptions, legacyNormalize);
+    const format = options.format ?? 'yaml';
+    const shouldNormalize = options.normalize ?? true;
+    const shouldValidate = options.validate ?? true;
     const workflow = new Workflow(model);
-    workflow.validate();
-    const plainWorkflow = (normalize ? workflow.normalize() : workflow).asPlainObject();
-    return format === 'json' ? JSON.stringify(plainWorkflow) : yaml.dump(plainWorkflow);
+    if (shouldValidate) {
+      workflow.validate();
+    }
+    const plainWorkflow = (shouldNormalize ? workflow.normalize() : workflow).asPlainObject();
+    return format === 'json'
+      ? JSON.stringify(plainWorkflow)
+      : yaml.dump(plainWorkflow, toYamlDumpOptions(options.yaml));
   }
 
   /**
@@ -148,12 +185,25 @@ export class Workflow extends ObjectHydrator<Specification.Workflow> {
 
   /**
    * Serializes the workflow to YAML or JSON
+   * @param options The serialization options, e.g. the format or whether to validate
+   * @returns A string representation of the workflow
+   */
+  serialize(options?: SerializationOptions): string;
+
+  /**
+   * Serializes the workflow to YAML or JSON
+   * @deprecated Pass a `SerializationOptions` object instead, e.g. `serialize({ format: 'json' })`
    * @param format The format, 'yaml' or 'json', default is 'yaml'
    * @param normalize If the workflow should be normalized before serialization, default true
    * @returns A string representation of the workflow
    */
-  serialize(format: 'yaml' | 'json' = 'yaml', normalize: boolean = true): string {
-    return Workflow.serialize(this as unknown as WorkflowIntersection, format, normalize);
+  serialize(format?: 'yaml' | 'json', normalize?: boolean): string;
+
+  serialize(formatOrOptions?: 'yaml' | 'json' | SerializationOptions, legacyNormalize?: boolean): string {
+    return Workflow.serialize(
+      this as unknown as WorkflowIntersection,
+      toSerializationOptions(formatOrOptions, legacyNormalize),
+    );
   }
 
   /**
@@ -178,12 +228,22 @@ export const _Workflow = Workflow as WorkflowConstructor & {
   /**
    * Deserializes the provided string as a Workflow
    * @param text The YAML or JSON representation of a workflow
+   * @param options The deserialization options, e.g. to opt out of validation
    * @returns A new Workflow instance
    */
-  deserialize(text: string): WorkflowIntersection;
+  deserialize(text: string, options?: DeserializationOptions): WorkflowIntersection;
 
   /**
    * Serializes the provided Workflow to YAML or JSON
+   * @param workflow The workflow to serialize
+   * @param options The serialization options, e.g. the format or whether to validate
+   * @returns A string representation of the workflow
+   */
+  serialize(workflow: Partial<WorkflowIntersection>, options?: SerializationOptions): string;
+
+  /**
+   * Serializes the provided Workflow to YAML or JSON
+   * @deprecated Pass a `SerializationOptions` object instead, e.g. `serialize(workflow, { format: 'json' })`
    * @param workflow The workflow to serialize
    * @param format The format, 'yaml' or 'json', default is 'yaml'
    * @param normalize If the workflow should be normalized before serialization, default true

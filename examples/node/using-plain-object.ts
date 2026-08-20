@@ -20,7 +20,7 @@ const workflowDefinition = {
 try {
   validate('Workflow', workflowDefinition);
   console.log(
-    `--- YAML ---\n${Classes.Workflow.serialize(workflowDefinition)}\n\n--- JSON ---\n${Classes.Workflow.serialize(workflowDefinition, 'json')}`,
+    `--- YAML ---\n${Classes.Workflow.serialize(workflowDefinition)}\n\n--- JSON ---\n${Classes.Workflow.serialize(workflowDefinition, { format: 'json' })}`,
   );
 } catch (ex) {
   console.error('Invalid workflow', ex);

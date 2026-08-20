@@ -125,6 +125,15 @@ do:
 const workflow = Classes.Workflow.deserialize(text);
 ```
 
+Deserialization validates the document by default. Pass `{ validate: false }` to load a work in progress definition, which is what an editor holds most of the time:
+
+```typescript
+const draft = Classes.Workflow.deserialize(text, { validate: false });
+```
+
+> [!NOTE]
+> Opting out skips *validation*, not *hydration*. A definition whose shape is structurally impossible, for instance `do` written as a mapping rather than a sequence, still throws while the classes are built.
+
 #### Create a Workflow Definition by Casting an Object
 
 You can type-cast an object to match the structure of a workflow definition:
@@ -241,14 +250,43 @@ import { Classes } from '@openworkflowspec/sdk';
 
 // const workflow = <Your preferred method>;
 if (workflow instanceof Classes.Workflow) {
-  const yaml = workflow.serialize(/*'yaml' | 'json' */);
+  const yaml = workflow.serialize(/*{ format: 'yaml' | 'json' }*/);
 } else {
-  const json = Classes.Workflow.serialize(workflow, 'json');
+  const json = Classes.Workflow.serialize(workflow, { format: 'json' });
 }
 ```
 
+Both accept a `SerializationOptions` payload, mirroring the `build({ validate, normalize })` options above:
+
+```typescript
+import { Classes } from '@openworkflowspec/sdk';
+import type { SerializationOptions } from '@openworkflowspec/sdk';
+
+const options: SerializationOptions = {
+  format: 'yaml', // default 'yaml'
+  normalize: true, // default true
+  validate: true, // default true
+  yaml: {
+    indent: 2, // default 2
+    lineWidth: 80, // default 80, -1 for unlimited
+    sortKeys: false, // default false
+    flowLevel: -1, // default -1, never switch to flow style
+  },
+};
+const text = workflow.serialize(options);
+```
+
+Set `validate: false` to save a work in progress definition, and `yaml: { lineWidth: -1 }` to stop long runtime expressions being folded into block scalars, which is usually what you want for a definition kept under version control:
+
+```typescript
+const draft = workflow.serialize({ validate: false, yaml: { lineWidth: -1 } });
+```
+
 > [!NOTE]
-> The default serialization format is YAML.
+> The default serialization format is YAML. The `yaml` options are ignored when the format is `json`.
+
+> [!TIP]
+> The positional form, `serialize('json')` and `serialize('yaml', false)`, still works but is deprecated in favour of the options payload.
 
 #### Validate Workflow Definitions
 

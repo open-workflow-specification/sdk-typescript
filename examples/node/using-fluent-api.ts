@@ -31,7 +31,7 @@ try {
         .build(),
     )
     .build();
-  console.log(`--- YAML ---\n${workflow.serialize()}\n\n--- JSON ---\n${workflow.serialize('json')}`);
+  console.log(`--- YAML ---\n${workflow.serialize()}\n\n--- JSON ---\n${workflow.serialize({ format: 'json' })}`);
 } catch (ex) {
   console.error('Invalid workflow', ex);
 }

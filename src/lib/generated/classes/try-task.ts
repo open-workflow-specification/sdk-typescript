@@ -51,7 +51,7 @@ export interface TryTaskConstructor {
  */
 export class TryTask extends _TaskBase {
   /**
-   * Instanciates a new instance of the TryTask class.
+   * Instantiates a new instance of the TryTask class.
    * Initializes properties based on the provided model if it is an object.
    *
    * @param model - Optional partial model object to initialize the TryTask.

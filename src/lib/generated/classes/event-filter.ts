@@ -46,7 +46,7 @@ export interface EventFilterConstructor {
  */
 export class EventFilter extends ObjectHydrator<Specification.EventFilter> {
   /**
-   * Instanciates a new instance of the EventFilter class.
+   * Instantiates a new instance of the EventFilter class.
    * Initializes properties based on the provided model if it is an object.
    *
    * @param model - Optional partial model object to initialize the EventFilter.

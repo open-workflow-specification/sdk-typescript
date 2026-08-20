@@ -49,7 +49,7 @@ export interface AuthenticationPolicyConstructor {
  */
 export class AuthenticationPolicy extends ObjectHydrator<Specification.AuthenticationPolicy> {
   /**
-   * Instanciates a new instance of the AuthenticationPolicy class.
+   * Instantiates a new instance of the AuthenticationPolicy class.
    * Initializes properties based on the provided model if it is an object.
    *
    * @param model - Optional partial model object to initialize the AuthenticationPolicy.

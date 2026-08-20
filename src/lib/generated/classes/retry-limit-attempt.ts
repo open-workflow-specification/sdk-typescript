@@ -45,7 +45,7 @@ export interface RetryLimitAttemptConstructor {
  */
 export class RetryLimitAttempt extends ObjectHydrator<Specification.RetryLimitAttempt> {
   /**
-   * Instanciates a new instance of the RetryLimitAttempt class.
+   * Instantiates a new instance of the RetryLimitAttempt class.
    * Initializes properties based on the provided model if it is an object.
    *
    * @param model - Optional partial model object to initialize the RetryLimitAttempt.

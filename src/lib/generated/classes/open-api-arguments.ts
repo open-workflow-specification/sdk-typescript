@@ -47,7 +47,7 @@ export interface OpenAPIArgumentsConstructor {
  */
 export class OpenAPIArguments extends ObjectHydrator<Specification.OpenAPIArguments> {
   /**
-   * Instanciates a new instance of the OpenAPIArguments class.
+   * Instantiates a new instance of the OpenAPIArguments class.
    * Initializes properties based on the provided model if it is an object.
    *
    * @param model - Optional partial model object to initialize the OpenAPIArguments.

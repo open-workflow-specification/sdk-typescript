@@ -46,7 +46,7 @@ export interface DigestAuthenticationPolicyConfigurationConstructor {
  */
 export class DigestAuthenticationPolicyConfiguration extends ObjectHydrator<Specification.DigestAuthenticationPolicyConfiguration> {
   /**
-   * Instanciates a new instance of the DigestAuthenticationPolicyConfiguration class.
+   * Instantiates a new instance of the DigestAuthenticationPolicyConfiguration class.
    * Initializes properties based on the provided model if it is an object.
    *
    * @param model - Optional partial model object to initialize the DigestAuthenticationPolicyConfiguration.

@@ -45,7 +45,7 @@ export interface EndpointConfigurationConstructor {
  */
 export class EndpointConfiguration extends ObjectHydrator<Specification.EndpointConfiguration> {
   /**
-   * Instanciates a new instance of the EndpointConfiguration class.
+   * Instantiates a new instance of the EndpointConfiguration class.
    * Initializes properties based on the provided model if it is an object.
    *
    * @param model - Optional partial model object to initialize the EndpointConfiguration.

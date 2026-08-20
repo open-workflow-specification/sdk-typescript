@@ -45,7 +45,7 @@ export interface EmitTaskConfigurationConstructor {
  */
 export class EmitTaskConfiguration extends ObjectHydrator<Specification.EmitTaskConfiguration> {
   /**
-   * Instanciates a new instance of the EmitTaskConfiguration class.
+   * Instantiates a new instance of the EmitTaskConfiguration class.
    * Initializes properties based on the provided model if it is an object.
    *
    * @param model - Optional partial model object to initialize the EmitTaskConfiguration.

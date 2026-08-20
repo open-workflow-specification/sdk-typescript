@@ -50,7 +50,7 @@ export interface SwitchTaskConstructor {
  */
 export class SwitchTask extends _TaskBase {
   /**
-   * Instanciates a new instance of the SwitchTask class.
+   * Instantiates a new instance of the SwitchTask class.
    * Initializes properties based on the provided model if it is an object.
    *
    * @param model - Optional partial model object to initialize the SwitchTask.

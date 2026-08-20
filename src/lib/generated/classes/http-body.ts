@@ -43,7 +43,7 @@ export interface HTTPBodyConstructor {
  */
 export class HTTPBody extends ObjectHydrator<Specification.HTTPBody> {
   /**
-   * Instanciates a new instance of the HTTPBody class.
+   * Instantiates a new instance of the HTTPBody class.
    * Initializes properties based on the provided model if it is an object.
    *
    * @param model - Optional partial model object to initialize the HTTPBody.

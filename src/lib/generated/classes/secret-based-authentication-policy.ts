@@ -44,7 +44,7 @@ export interface SecretBasedAuthenticationPolicyConstructor {
  */
 export class SecretBasedAuthenticationPolicy extends ObjectHydrator<Specification.SecretBasedAuthenticationPolicy> {
   /**
-   * Instanciates a new instance of the SecretBasedAuthenticationPolicy class.
+   * Instantiates a new instance of the SecretBasedAuthenticationPolicy class.
    * Initializes properties based on the provided model if it is an object.
    *
    * @param model - Optional partial model object to initialize the SecretBasedAuthenticationPolicy.

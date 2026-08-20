@@ -45,7 +45,7 @@ export interface UseTimeoutsConstructor {
  */
 export class UseTimeouts extends ObjectHydrator<Specification.UseTimeouts> {
   /**
-   * Instanciates a new instance of the UseTimeouts class.
+   * Instantiates a new instance of the UseTimeouts class.
    * Initializes properties based on the provided model if it is an object.
    *
    * @param model - Optional partial model object to initialize the UseTimeouts.

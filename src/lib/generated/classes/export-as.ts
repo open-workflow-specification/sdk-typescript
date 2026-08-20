@@ -43,7 +43,7 @@ export interface ExportAsConstructor {
  */
 export class ExportAs extends ObjectHydrator<Specification.ExportAs> {
   /**
-   * Instanciates a new instance of the ExportAs class.
+   * Instantiates a new instance of the ExportAs class.
    * Initializes properties based on the provided model if it is an object.
    *
    * @param model - Optional partial model object to initialize the ExportAs.

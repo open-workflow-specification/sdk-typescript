@@ -46,7 +46,7 @@ export interface OAuth2AuthenticationPropertiesEndpointsConstructor {
  */
 export class OAuth2AuthenticationPropertiesEndpoints extends ObjectHydrator<Specification.OAuth2AuthenticationPropertiesEndpoints> {
   /**
-   * Instanciates a new instance of the OAuth2AuthenticationPropertiesEndpoints class.
+   * Instantiates a new instance of the OAuth2AuthenticationPropertiesEndpoints class.
    * Initializes properties based on the provided model if it is an object.
    *
    * @param model - Optional partial model object to initialize the OAuth2AuthenticationPropertiesEndpoints.

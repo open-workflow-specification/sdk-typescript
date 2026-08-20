@@ -43,7 +43,7 @@ export interface OutputAsConstructor {
  */
 export class OutputAs extends ObjectHydrator<Specification.OutputAs> {
   /**
-   * Instanciates a new instance of the OutputAs class.
+   * Instantiates a new instance of the OutputAs class.
    * Initializes properties based on the provided model if it is an object.
    *
    * @param model - Optional partial model object to initialize the OutputAs.

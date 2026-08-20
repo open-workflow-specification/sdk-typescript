@@ -43,7 +43,7 @@ export interface SubflowInputConstructor {
  */
 export class SubflowInput extends ObjectHydrator<Specification.SubflowInput> {
   /**
-   * Instanciates a new instance of the SubflowInput class.
+   * Instantiates a new instance of the SubflowInput class.
    * Initializes properties based on the provided model if it is an object.
    *
    * @param model - Optional partial model object to initialize the SubflowInput.

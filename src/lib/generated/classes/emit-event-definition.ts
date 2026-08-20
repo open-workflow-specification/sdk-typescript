@@ -45,7 +45,7 @@ export interface EmitEventDefinitionConstructor {
  */
 export class EmitEventDefinition extends ObjectHydrator<Specification.EmitEventDefinition> {
   /**
-   * Instanciates a new instance of the EmitEventDefinition class.
+   * Instantiates a new instance of the EmitEventDefinition class.
    * Initializes properties based on the provided model if it is an object.
    *
    * @param model - Optional partial model object to initialize the EmitEventDefinition.

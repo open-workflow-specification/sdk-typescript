@@ -78,7 +78,7 @@ export interface ${name}Constructor {
  */
 export class ${name} extends ${baseClass ? '_' + baseClass : `ObjectHydrator<Specification.${name}>`} {
   /**
-   * Instanciates a new instance of the ${name} class.
+   * Instantiates a new instance of the ${name} class.
    * Initializes properties based on the provided model if it is an object.
    *
    * @param model - Optional partial model object to initialize the ${name}.

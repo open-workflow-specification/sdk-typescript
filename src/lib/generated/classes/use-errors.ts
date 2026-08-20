@@ -45,7 +45,7 @@ export interface UseErrorsConstructor {
  */
 export class UseErrors extends ObjectHydrator<Specification.UseErrors> {
   /**
-   * Instanciates a new instance of the UseErrors class.
+   * Instantiates a new instance of the UseErrors class.
    * Initializes properties based on the provided model if it is an object.
    *
    * @param model - Optional partial model object to initialize the UseErrors.

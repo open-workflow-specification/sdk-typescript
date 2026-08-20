@@ -43,7 +43,7 @@ export interface DurationConstructor {
  */
 export class Duration extends ObjectHydrator<Specification.Duration> {
   /**
-   * Instanciates a new instance of the Duration class.
+   * Instantiates a new instance of the Duration class.
    * Initializes properties based on the provided model if it is an object.
    *
    * @param model - Optional partial model object to initialize the Duration.

@@ -43,7 +43,7 @@ export interface ErrorDetailsConstructor {
  */
 export class ErrorDetails extends ObjectHydrator<Specification.ErrorDetails> {
   /**
-   * Instanciates a new instance of the ErrorDetails class.
+   * Instantiates a new instance of the ErrorDetails class.
    * Initializes properties based on the provided model if it is an object.
    *
    * @param model - Optional partial model object to initialize the ErrorDetails.

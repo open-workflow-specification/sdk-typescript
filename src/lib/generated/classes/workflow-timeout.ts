@@ -45,7 +45,7 @@ export interface WorkflowTimeoutConstructor {
  */
 export class WorkflowTimeout extends ObjectHydrator<Specification.WorkflowTimeout> {
   /**
-   * Instanciates a new instance of the WorkflowTimeout class.
+   * Instantiates a new instance of the WorkflowTimeout class.
    * Initializes properties based on the provided model if it is an object.
    *
    * @param model - Optional partial model object to initialize the WorkflowTimeout.

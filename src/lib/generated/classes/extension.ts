@@ -45,7 +45,7 @@ export interface ExtensionConstructor {
  */
 export class Extension extends ObjectHydrator<Specification.Extension> {
   /**
-   * Instanciates a new instance of the Extension class.
+   * Instantiates a new instance of the Extension class.
    * Initializes properties based on the provided model if it is an object.
    *
    * @param model - Optional partial model object to initialize the Extension.

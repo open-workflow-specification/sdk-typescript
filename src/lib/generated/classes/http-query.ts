@@ -43,7 +43,7 @@ export interface HTTPQueryConstructor {
  */
 export class HTTPQuery extends ObjectHydrator<Specification.HTTPQuery> {
   /**
-   * Instanciates a new instance of the HTTPQuery class.
+   * Instantiates a new instance of the HTTPQuery class.
    * Initializes properties based on the provided model if it is an object.
    *
    * @param model - Optional partial model object to initialize the HTTPQuery.

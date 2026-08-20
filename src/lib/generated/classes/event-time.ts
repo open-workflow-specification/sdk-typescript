@@ -43,7 +43,7 @@ export interface EventTimeConstructor {
  */
 export class EventTime extends ObjectHydrator<Specification.EventTime> {
   /**
-   * Instanciates a new instance of the EventTime class.
+   * Instantiates a new instance of the EventTime class.
    * Initializes properties based on the provided model if it is an object.
    *
    * @param model - Optional partial model object to initialize the EventTime.

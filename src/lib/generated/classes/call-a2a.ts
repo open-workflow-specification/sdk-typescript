@@ -50,7 +50,7 @@ export interface CallA2AConstructor {
  */
 export class CallA2A extends _TaskBase {
   /**
-   * Instanciates a new instance of the CallA2A class.
+   * Instantiates a new instance of the CallA2A class.
    * Initializes properties based on the provided model if it is an object.
    *
    * @param model - Optional partial model object to initialize the CallA2A.

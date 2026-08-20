@@ -43,7 +43,7 @@ export interface WorkflowTagsConstructor {
  */
 export class WorkflowTags extends ObjectHydrator<Specification.WorkflowTags> {
   /**
-   * Instanciates a new instance of the WorkflowTags class.
+   * Instantiates a new instance of the WorkflowTags class.
    * Initializes properties based on the provided model if it is an object.
    *
    * @param model - Optional partial model object to initialize the WorkflowTags.

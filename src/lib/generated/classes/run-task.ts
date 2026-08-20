@@ -50,7 +50,7 @@ export interface RunTaskConstructor {
  */
 export class RunTask extends _TaskBase {
   /**
-   * Instanciates a new instance of the RunTask class.
+   * Instantiates a new instance of the RunTask class.
    * Initializes properties based on the provided model if it is an object.
    *
    * @param model - Optional partial model object to initialize the RunTask.

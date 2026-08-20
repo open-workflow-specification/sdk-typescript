@@ -43,7 +43,7 @@ export interface ForTaskConfigurationConstructor {
  */
 export class ForTaskConfiguration extends ObjectHydrator<Specification.ForTaskConfiguration> {
   /**
-   * Instanciates a new instance of the ForTaskConfiguration class.
+   * Instantiates a new instance of the ForTaskConfiguration class.
    * Initializes properties based on the provided model if it is an object.
    *
    * @param model - Optional partial model object to initialize the ForTaskConfiguration.

@@ -45,7 +45,7 @@ export interface ExternalResourceConstructor {
  */
 export class ExternalResource extends ObjectHydrator<Specification.ExternalResource> {
   /**
-   * Instanciates a new instance of the ExternalResource class.
+   * Instantiates a new instance of the ExternalResource class.
    * Initializes properties based on the provided model if it is an object.
    *
    * @param model - Optional partial model object to initialize the ExternalResource.

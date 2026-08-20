@@ -43,7 +43,7 @@ export interface TaskBaseIfConstructor {
  */
 export class TaskBaseIf extends ObjectHydrator<Specification.TaskBaseIf> {
   /**
-   * Instanciates a new instance of the TaskBaseIf class.
+   * Instantiates a new instance of the TaskBaseIf class.
    * Initializes properties based on the provided model if it is an object.
    *
    * @param model - Optional partial model object to initialize the TaskBaseIf.

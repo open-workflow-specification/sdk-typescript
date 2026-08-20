@@ -50,7 +50,7 @@ export interface OpenIdConnectAuthenticationPolicyConfigurationConstructor {
  */
 export class OpenIdConnectAuthenticationPolicyConfiguration extends ObjectHydrator<Specification.OpenIdConnectAuthenticationPolicyConfiguration> {
   /**
-   * Instanciates a new instance of the OpenIdConnectAuthenticationPolicyConfiguration class.
+   * Instantiates a new instance of the OpenIdConnectAuthenticationPolicyConfiguration class.
    * Initializes properties based on the provided model if it is an object.
    *
    * @param model - Optional partial model object to initialize the OpenIdConnectAuthenticationPolicyConfiguration.

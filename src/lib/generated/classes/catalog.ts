@@ -45,7 +45,7 @@ export interface CatalogConstructor {
  */
 export class Catalog extends ObjectHydrator<Specification.Catalog> {
   /**
-   * Instanciates a new instance of the Catalog class.
+   * Instantiates a new instance of the Catalog class.
    * Initializes properties based on the provided model if it is an object.
    *
    * @param model - Optional partial model object to initialize the Catalog.

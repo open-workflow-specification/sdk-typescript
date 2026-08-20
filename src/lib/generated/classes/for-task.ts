@@ -51,7 +51,7 @@ export interface ForTaskConstructor {
  */
 export class ForTask extends _TaskBase {
   /**
-   * Instanciates a new instance of the ForTask class.
+   * Instantiates a new instance of the ForTask class.
    * Initializes properties based on the provided model if it is an object.
    *
    * @param model - Optional partial model object to initialize the ForTask.

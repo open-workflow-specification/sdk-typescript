@@ -43,7 +43,7 @@ export interface EmitEventWithConstructor {
  */
 export class EmitEventWith extends ObjectHydrator<Specification.EmitEventWith> {
   /**
-   * Instanciates a new instance of the EmitEventWith class.
+   * Instantiates a new instance of the EmitEventWith class.
    * Initializes properties based on the provided model if it is an object.
    *
    * @param model - Optional partial model object to initialize the EmitEventWith.

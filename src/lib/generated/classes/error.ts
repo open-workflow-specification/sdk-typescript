@@ -43,7 +43,7 @@ export interface ErrorConstructor {
  */
 export class Error extends ObjectHydrator<Specification.Error> {
   /**
-   * Instanciates a new instance of the Error class.
+   * Instantiates a new instance of the Error class.
    * Initializes properties based on the provided model if it is an object.
    *
    * @param model - Optional partial model object to initialize the Error.

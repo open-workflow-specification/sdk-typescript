@@ -43,7 +43,7 @@ export interface TaskMetadataConstructor {
  */
 export class TaskMetadata extends ObjectHydrator<Specification.TaskMetadata> {
   /**
-   * Instanciates a new instance of the TaskMetadata class.
+   * Instantiates a new instance of the TaskMetadata class.
    * Initializes properties based on the provided model if it is an object.
    *
    * @param model - Optional partial model object to initialize the TaskMetadata.

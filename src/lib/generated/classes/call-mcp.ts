@@ -50,7 +50,7 @@ export interface CallMCPConstructor {
  */
 export class CallMCP extends _TaskBase {
   /**
-   * Instanciates a new instance of the CallMCP class.
+   * Instantiates a new instance of the CallMCP class.
    * Initializes properties based on the provided model if it is an object.
    *
    * @param model - Optional partial model object to initialize the CallMCP.

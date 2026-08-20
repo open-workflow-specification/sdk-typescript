@@ -43,7 +43,7 @@ export interface WithGRPCArgumentsConstructor {
  */
 export class WithGRPCArguments extends ObjectHydrator<Specification.WithGRPCArguments> {
   /**
-   * Instanciates a new instance of the WithGRPCArguments class.
+   * Instantiates a new instance of the WithGRPCArguments class.
    * Initializes properties based on the provided model if it is an object.
    *
    * @param model - Optional partial model object to initialize the WithGRPCArguments.

@@ -45,7 +45,7 @@ export interface TimeoutConstructor {
  */
 export class Timeout extends ObjectHydrator<Specification.Timeout> {
   /**
-   * Instanciates a new instance of the Timeout class.
+   * Instantiates a new instance of the Timeout class.
    * Initializes properties based on the provided model if it is an object.
    *
    * @param model - Optional partial model object to initialize the Timeout.

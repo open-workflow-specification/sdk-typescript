@@ -43,7 +43,7 @@ export interface OAuth2TokenRequestConstructor {
  */
 export class OAuth2TokenRequest extends ObjectHydrator<Specification.OAuth2TokenRequest> {
   /**
-   * Instanciates a new instance of the OAuth2TokenRequest class.
+   * Instantiates a new instance of the OAuth2TokenRequest class.
    * Initializes properties based on the provided model if it is an object.
    *
    * @param model - Optional partial model object to initialize the OAuth2TokenRequest.

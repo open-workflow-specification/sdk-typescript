@@ -43,7 +43,7 @@ export interface ErrorTitleConstructor {
  */
 export class ErrorTitle extends ObjectHydrator<Specification.ErrorTitle> {
   /**
-   * Instanciates a new instance of the ErrorTitle class.
+   * Instantiates a new instance of the ErrorTitle class.
    * Initializes properties based on the provided model if it is an object.
    *
    * @param model - Optional partial model object to initialize the ErrorTitle.

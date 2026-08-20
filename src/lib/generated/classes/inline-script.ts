@@ -43,7 +43,7 @@ export interface InlineScriptConstructor {
  */
 export class InlineScript extends ObjectHydrator<Specification.InlineScript> {
   /**
-   * Instanciates a new instance of the InlineScript class.
+   * Instantiates a new instance of the InlineScript class.
    * Initializes properties based on the provided model if it is an object.
    *
    * @param model - Optional partial model object to initialize the InlineScript.

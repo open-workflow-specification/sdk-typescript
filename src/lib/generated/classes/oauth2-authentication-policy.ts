@@ -46,7 +46,7 @@ export interface OAuth2AuthenticationPolicyConstructor {
  */
 export class OAuth2AuthenticationPolicy extends ObjectHydrator<Specification.OAuth2AuthenticationPolicy> {
   /**
-   * Instanciates a new instance of the OAuth2AuthenticationPolicy class.
+   * Instantiates a new instance of the OAuth2AuthenticationPolicy class.
    * Initializes properties based on the provided model if it is an object.
    *
    * @param model - Optional partial model object to initialize the OAuth2AuthenticationPolicy.

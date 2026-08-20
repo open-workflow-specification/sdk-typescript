@@ -45,7 +45,7 @@ export interface TaskItemConstructor {
  */
 export class TaskItem extends ObjectHydrator<Specification.TaskItem> {
   /**
-   * Instanciates a new instance of the TaskItem class.
+   * Instantiates a new instance of the TaskItem class.
    * Initializes properties based on the provided model if it is an object.
    *
    * @param model - Optional partial model object to initialize the TaskItem.

@@ -1,6 +1,6 @@
 name: Bug Report
 description: Create a bug report
-labels: ['type: bug']
+labels: ['bug']
 body:
   - type: markdown
     attributes:
@@ -52,10 +52,32 @@ body:
       value: |
         ## Environment
 
+  - type: input
+    id: sdk-version
+    attributes:
+      label: 'SDK version'
+      description: 'The version of `@openworkflowspec/sdk` you are using.'
+      placeholder: 'e.g. 1.0.3-alpha7'
+    validations:
+      required: true
+
+  - type: input
+    id: node-version
+    attributes:
+      label: 'Node.js version'
+      description: 'The output of `node -v`.'
+      placeholder: 'e.g. v22.22.2'
+
+  - type: input
+    id: os
+    attributes:
+      label: 'Operating system'
+      placeholder: 'e.g. Windows 11, Ubuntu 24.04, macOS 15'
+
   - type: textarea
     attributes:
       label: Community Notes
       value: |
         <!-- Please keep this note for the community -->
         * Please vote by adding a 👍 reaction to the issue to help us prioritize.
-        * If you are interested to work on this issue, please leave a comment.name: Bug Report 🐞
+        * If you are interested to work on this issue, please leave a comment.

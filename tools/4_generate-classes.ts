@@ -112,34 +112,54 @@ export class ${name} extends ${baseClass ? '_' + baseClass : `ObjectHydrator<Spe
   ${
     name === 'Workflow'
       ? `
+  /**
+   * Deserializes the provided string as a Workflow
+   * @param text The YAML or JSON representation of a workflow
+   * @returns A new Workflow instance
+   */
   static deserialize(text: string): WorkflowIntersection {
     const model = yaml.load(text) as Partial<Specification.Workflow>;
     validate('Workflow', model);
     return new Workflow(model) as WorkflowIntersection;
   }
 
+  /**
+   * Serializes the provided workflow to YAML or JSON.
+   *
+   * Both formats serialize the same plain representation of the document, obtained via
+   * \`asPlainObject()\`: js-yaml cannot dump hydrated class instances. See issue #308.
+   *
+   * @param model The workflow to serialize
+   * @param format The format, 'yaml' or 'json', default is 'yaml'
+   * @param normalize If the workflow should be normalized before serialization, default true
+   * @returns A string representation of the workflow
+   */
   static serialize(
     model: Partial<WorkflowIntersection>,
     format: 'yaml' | 'json' = 'yaml',
     normalize: boolean = true,
-    validate: boolean = true,
   ): string {
     const workflow = new Workflow(model);
-    if (validate) {
-      workflow.validate();
-    }
-    const normalized = normalize ? workflow.normalize() : workflow;
-    const json = JSON.stringify(normalized);
-    if (format === 'json') {
-      return json;
-    }
-    return yaml.dump(JSON.parse(json));
+    workflow.validate();
+    const plainWorkflow = (normalize ? workflow.normalize() : workflow).asPlainObject();
+    return format === 'json' ? JSON.stringify(plainWorkflow) : yaml.dump(plainWorkflow);
   }
 
+  /**
+   * Creates a directed graph representation of the provided workflow
+   * @param model The workflow to convert
+   * @param options The options used to customize how the graph is built, e.g. to provide custom node ids
+   * @returns A directed graph of the provided workflow
+   */
   static toGraph(model: Partial<WorkflowIntersection>, options?: GraphBuildOptions): Graph {
     return buildGraph(model as unknown as WorkflowIntersection, options);
   }
 
+  /**
+   * Generates the MermaidJS code corresponding to the provided workflow
+   * @param model The workflow to convert
+   * @returns The MermaidJS code
+   */
   static toMermaidCode(model: Partial<WorkflowIntersection>): string {
     return convertToMermaidCode(model as unknown as WorkflowIntersection);
   }
@@ -148,11 +168,10 @@ export class ${name} extends ${baseClass ? '_' + baseClass : `ObjectHydrator<Spe
    * Serializes the workflow to YAML or JSON
    * @param format The format, 'yaml' or 'json', default is 'yaml'
    * @param normalize If the workflow should be normalized before serialization, default true
-   * @param validate If the workflow should be validated before serialization, default true
    * @returns A string representation of the workflow
    */
-  serialize(format: 'yaml' | 'json' = 'yaml', normalize: boolean = true, validate: boolean = true): string {
-    return Workflow.serialize(this as unknown as WorkflowIntersection, format, normalize, validate);
+  serialize(format: 'yaml' | 'json' = 'yaml', normalize: boolean = true): string {
+    return Workflow.serialize(this as unknown as WorkflowIntersection, format, normalize);
   }
 
   /**
@@ -190,10 +209,9 @@ export const _${name} = ${name} as ${name}Constructor${
    * @param workflow The workflow to serialize
    * @param format The format, 'yaml' or 'json', default is 'yaml'
    * @param normalize If the workflow should be normalized before serialization, default true
-   * @param validate If the workflow should be validated before serialization, default true
    * @returns A string representation of the workflow
    */
-  serialize(workflow: Partial<WorkflowIntersection>, format?: 'yaml' | 'json', normalize?: boolean, validate?: boolean): string;
+  serialize(workflow: Partial<WorkflowIntersection>, format?: 'yaml' | 'json', normalize?: boolean): string;
 
   /**
    * Creates a directed graph representation of the provided workflow

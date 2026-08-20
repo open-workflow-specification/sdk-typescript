@@ -21,10 +21,30 @@ import { deepCopy, isObject } from './utils';
  * A base class used for object hydration
  */
 export class ObjectHydrator<T> {
+  /**
+   * Instanciates a new instance of the ObjectHydrator class.
+   * Copies the own properties of the provided model onto the instance if it is an object.
+   *
+   * @param model - Optional partial model object to initialize the instance.
+   */
   constructor(model?: Partial<T>) {
     if (isObject(model)) {
       Object.assign(this, deepCopy(model));
     }
+  }
+
+  /**
+   * Converts the hydrated instance, and every hydrated instance nested within it, into plain data.
+   *
+   * Hydrated objects are class instances, which several plain data consumers reject: js-yaml v5
+   * identifies mappings with `Object.getPrototypeOf(data) === Object.prototype` and throws on
+   * anything else, and AJV reports class members as unevaluated properties. Use this method to
+   * obtain a representation safe to hand to such a consumer. See issue #308.
+   *
+   * @returns A plain object representation of the instance, free of class prototypes
+   */
+  asPlainObject(): T {
+    return deepCopy(this as unknown as T);
   }
 }
 
@@ -32,6 +52,12 @@ export class ObjectHydrator<T> {
  * A base class used for array hydration
  */
 export class ArrayHydrator<T> extends Array<T> {
+  /**
+   * Instanciates a new instance of the ArrayHydrator class.
+   * Copies the elements of the provided model onto the instance if it is an array.
+   *
+   * @param model - Optional array or number to initialize the instance.
+   */
   constructor(model?: Array<T> | number) {
     if (!isNaN(model as number)) {
       super(model as number);

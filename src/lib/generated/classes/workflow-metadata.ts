@@ -43,7 +43,7 @@ export interface WorkflowMetadataConstructor {
  */
 export class WorkflowMetadata extends ObjectHydrator<Specification.WorkflowMetadata> {
   /**
-   * Instanciates a new instance of the WorkflowMetadata class.
+   * Instantiates a new instance of the WorkflowMetadata class.
    * Initializes properties based on the provided model if it is an object.
    *
    * @param model - Optional partial model object to initialize the WorkflowMetadata.

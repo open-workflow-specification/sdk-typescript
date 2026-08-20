@@ -51,7 +51,7 @@ export interface ListenTaskConstructor {
  */
 export class ListenTask extends _TaskBase {
   /**
-   * Instanciates a new instance of the ListenTask class.
+   * Instantiates a new instance of the ListenTask class.
    * Initializes properties based on the provided model if it is an object.
    *
    * @param model - Optional partial model object to initialize the ListenTask.

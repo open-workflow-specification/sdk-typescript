@@ -60,7 +60,7 @@ export interface WorkflowConstructor {
  */
 export class Workflow extends ObjectHydrator<Specification.Workflow> {
   /**
-   * Instanciates a new instance of the Workflow class.
+   * Instantiates a new instance of the Workflow class.
    * Initializes properties based on the provided model if it is an object.
    *
    * @param model - Optional partial model object to initialize the Workflow.

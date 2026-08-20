@@ -51,7 +51,7 @@ export interface OAuth2ConnectAuthenticationPropertiesConstructor {
  */
 export class OAuth2ConnectAuthenticationProperties extends _OAuth2AuthenticationData {
   /**
-   * Instanciates a new instance of the OAuth2ConnectAuthenticationProperties class.
+   * Instantiates a new instance of the OAuth2ConnectAuthenticationProperties class.
    * Initializes properties based on the provided model if it is an object.
    *
    * @param model - Optional partial model object to initialize the OAuth2ConnectAuthenticationProperties.

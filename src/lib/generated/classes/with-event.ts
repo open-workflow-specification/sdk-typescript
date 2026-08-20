@@ -43,7 +43,7 @@ export interface WithEventConstructor {
  */
 export class WithEvent extends ObjectHydrator<Specification.WithEvent> {
   /**
-   * Instanciates a new instance of the WithEvent class.
+   * Instantiates a new instance of the WithEvent class.
    * Initializes properties based on the provided model if it is an object.
    *
    * @param model - Optional partial model object to initialize the WithEvent.

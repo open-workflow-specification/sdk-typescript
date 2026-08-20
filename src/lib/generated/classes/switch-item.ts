@@ -45,7 +45,7 @@ export interface SwitchItemConstructor {
  */
 export class SwitchItem extends ObjectHydrator<Specification.SwitchItem> {
   /**
-   * Instanciates a new instance of the SwitchItem class.
+   * Instantiates a new instance of the SwitchItem class.
    * Initializes properties based on the provided model if it is an object.
    *
    * @param model - Optional partial model object to initialize the SwitchItem.

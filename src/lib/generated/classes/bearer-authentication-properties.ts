@@ -44,7 +44,7 @@ export interface BearerAuthenticationPropertiesConstructor {
  */
 export class BearerAuthenticationProperties extends ObjectHydrator<Specification.BearerAuthenticationProperties> {
   /**
-   * Instanciates a new instance of the BearerAuthenticationProperties class.
+   * Instantiates a new instance of the BearerAuthenticationProperties class.
    * Initializes properties based on the provided model if it is an object.
    *
    * @param model - Optional partial model object to initialize the BearerAuthenticationProperties.

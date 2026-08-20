@@ -43,7 +43,7 @@ export interface RaiseTaskErrorConstructor {
  */
 export class RaiseTaskError extends ObjectHydrator<Specification.RaiseTaskError> {
   /**
-   * Instanciates a new instance of the RaiseTaskError class.
+   * Instantiates a new instance of the RaiseTaskError class.
    * Initializes properties based on the provided model if it is an object.
    *
    * @param model - Optional partial model object to initialize the RaiseTaskError.

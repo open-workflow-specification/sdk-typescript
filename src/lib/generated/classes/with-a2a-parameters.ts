@@ -43,7 +43,7 @@ export interface WithA2AParametersConstructor {
  */
 export class WithA2AParameters extends ObjectHydrator<Specification.WithA2AParameters> {
   /**
-   * Instanciates a new instance of the WithA2AParameters class.
+   * Instantiates a new instance of the WithA2AParameters class.
    * Initializes properties based on the provided model if it is an object.
    *
    * @param model - Optional partial model object to initialize the WithA2AParameters.

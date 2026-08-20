@@ -43,7 +43,7 @@ export interface ContainerEnvironmentConstructor {
  */
 export class ContainerEnvironment extends ObjectHydrator<Specification.ContainerEnvironment> {
   /**
-   * Instanciates a new instance of the ContainerEnvironment class.
+   * Instantiates a new instance of the ContainerEnvironment class.
    * Initializes properties based on the provided model if it is an object.
    *
    * @param model - Optional partial model object to initialize the ContainerEnvironment.

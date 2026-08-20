@@ -49,7 +49,7 @@ export interface TaskBaseConstructor {
  */
 export class TaskBase extends ObjectHydrator<Specification.TaskBase> {
   /**
-   * Instanciates a new instance of the TaskBase class.
+   * Instantiates a new instance of the TaskBase class.
    * Initializes properties based on the provided model if it is an object.
    *
    * @param model - Optional partial model object to initialize the TaskBase.

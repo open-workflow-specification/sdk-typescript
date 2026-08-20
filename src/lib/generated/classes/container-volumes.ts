@@ -43,7 +43,7 @@ export interface ContainerVolumesConstructor {
  */
 export class ContainerVolumes extends ObjectHydrator<Specification.ContainerVolumes> {
   /**
-   * Instanciates a new instance of the ContainerVolumes class.
+   * Instantiates a new instance of the ContainerVolumes class.
    * Initializes properties based on the provided model if it is an object.
    *
    * @param model - Optional partial model object to initialize the ContainerVolumes.

@@ -43,7 +43,7 @@ export interface SchemaInlineConstructor {
  */
 export class SchemaInline extends ObjectHydrator<Specification.SchemaInline> {
   /**
-   * Instanciates a new instance of the SchemaInline class.
+   * Instantiates a new instance of the SchemaInline class.
    * Initializes properties based on the provided model if it is an object.
    *
    * @param model - Optional partial model object to initialize the SchemaInline.

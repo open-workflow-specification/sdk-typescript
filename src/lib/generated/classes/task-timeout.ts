@@ -45,7 +45,7 @@ export interface TaskTimeoutConstructor {
  */
 export class TaskTimeout extends ObjectHydrator<Specification.TaskTimeout> {
   /**
-   * Instanciates a new instance of the TaskTimeout class.
+   * Instantiates a new instance of the TaskTimeout class.
    * Initializes properties based on the provided model if it is an object.
    *
    * @param model - Optional partial model object to initialize the TaskTimeout.

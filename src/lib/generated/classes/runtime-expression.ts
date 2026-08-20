@@ -43,7 +43,7 @@ export interface RuntimeExpressionConstructor {
  */
 export class RuntimeExpression extends ObjectHydrator<Specification.RuntimeExpression> {
   /**
-   * Instanciates a new instance of the RuntimeExpression class.
+   * Instantiates a new instance of the RuntimeExpression class.
    * Initializes properties based on the provided model if it is an object.
    *
    * @param model - Optional partial model object to initialize the RuntimeExpression.

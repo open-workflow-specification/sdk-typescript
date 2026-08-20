@@ -45,7 +45,7 @@ export interface UseFunctionsConstructor {
  */
 export class UseFunctions extends ObjectHydrator<Specification.UseFunctions> {
   /**
-   * Instanciates a new instance of the UseFunctions class.
+   * Instantiates a new instance of the UseFunctions class.
    * Initializes properties based on the provided model if it is an object.
    *
    * @param model - Optional partial model object to initialize the UseFunctions.

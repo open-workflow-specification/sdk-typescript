@@ -48,7 +48,7 @@ export interface RetryPolicyConstructor {
  */
 export class RetryPolicy extends ObjectHydrator<Specification.RetryPolicy> {
   /**
-   * Instanciates a new instance of the RetryPolicy class.
+   * Instantiates a new instance of the RetryPolicy class.
    * Initializes properties based on the provided model if it is an object.
    *
    * @param model - Optional partial model object to initialize the RetryPolicy.

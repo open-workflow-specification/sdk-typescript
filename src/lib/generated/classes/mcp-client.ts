@@ -43,7 +43,7 @@ export interface McpClientConstructor {
  */
 export class McpClient extends ObjectHydrator<Specification.McpClient> {
   /**
-   * Instanciates a new instance of the McpClient class.
+   * Instantiates a new instance of the McpClient class.
    * Initializes properties based on the provided model if it is an object.
    *
    * @param model - Optional partial model object to initialize the McpClient.

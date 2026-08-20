@@ -43,7 +43,7 @@ export interface DurationInlineConstructor {
  */
 export class DurationInline extends ObjectHydrator<Specification.DurationInline> {
   /**
-   * Instanciates a new instance of the DurationInline class.
+   * Instantiates a new instance of the DurationInline class.
    * Initializes properties based on the provided model if it is an object.
    *
    * @param model - Optional partial model object to initialize the DurationInline.

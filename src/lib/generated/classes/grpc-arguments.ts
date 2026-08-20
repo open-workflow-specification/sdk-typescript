@@ -47,7 +47,7 @@ export interface GRPCArgumentsConstructor {
  */
 export class GRPCArguments extends ObjectHydrator<Specification.GRPCArguments> {
   /**
-   * Instanciates a new instance of the GRPCArguments class.
+   * Instantiates a new instance of the GRPCArguments class.
    * Initializes properties based on the provided model if it is an object.
    *
    * @param model - Optional partial model object to initialize the GRPCArguments.

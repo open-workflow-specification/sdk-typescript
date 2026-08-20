@@ -47,7 +47,7 @@ export interface AnyEventUntilConsumedConstructor {
  */
 export class AnyEventUntilConsumed extends ObjectHydrator<Specification.AnyEventUntilConsumed> {
   /**
-   * Instanciates a new instance of the AnyEventUntilConsumed class.
+   * Instantiates a new instance of the AnyEventUntilConsumed class.
    * Initializes properties based on the provided model if it is an object.
    *
    * @param model - Optional partial model object to initialize the AnyEventUntilConsumed.

@@ -45,7 +45,7 @@ export interface UseCatalogsConstructor {
  */
 export class UseCatalogs extends ObjectHydrator<Specification.UseCatalogs> {
   /**
-   * Instanciates a new instance of the UseCatalogs class.
+   * Instantiates a new instance of the UseCatalogs class.
    * Initializes properties based on the provided model if it is an object.
    *
    * @param model - Optional partial model object to initialize the UseCatalogs.

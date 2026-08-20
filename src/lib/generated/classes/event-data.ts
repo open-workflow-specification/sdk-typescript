@@ -43,7 +43,7 @@ export interface EventDataConstructor {
  */
 export class EventData extends ObjectHydrator<Specification.EventData> {
   /**
-   * Instanciates a new instance of the EventData class.
+   * Instantiates a new instance of the EventData class.
    * Initializes properties based on the provided model if it is an object.
    *
    * @param model - Optional partial model object to initialize the EventData.

@@ -44,7 +44,7 @@ export interface DigestAuthenticationPropertiesConstructor {
  */
 export class DigestAuthenticationProperties extends ObjectHydrator<Specification.DigestAuthenticationProperties> {
   /**
-   * Instanciates a new instance of the DigestAuthenticationProperties class.
+   * Instantiates a new instance of the DigestAuthenticationProperties class.
    * Initializes properties based on the provided model if it is an object.
    *
    * @param model - Optional partial model object to initialize the DigestAuthenticationProperties.

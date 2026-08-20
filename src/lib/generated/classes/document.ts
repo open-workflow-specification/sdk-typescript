@@ -46,7 +46,7 @@ export interface DocumentConstructor {
  */
 export class Document extends ObjectHydrator<Specification.Document> {
   /**
-   * Instanciates a new instance of the Document class.
+   * Instantiates a new instance of the Document class.
    * Initializes properties based on the provided model if it is an object.
    *
    * @param model - Optional partial model object to initialize the Document.

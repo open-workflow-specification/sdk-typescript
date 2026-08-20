@@ -46,7 +46,7 @@ export interface AllEventConsumptionStrategyConstructor {
  */
 export class AllEventConsumptionStrategy extends ObjectHydrator<Specification.AllEventConsumptionStrategy> {
   /**
-   * Instanciates a new instance of the AllEventConsumptionStrategy class.
+   * Instantiates a new instance of the AllEventConsumptionStrategy class.
    * Initializes properties based on the provided model if it is an object.
    *
    * @param model - Optional partial model object to initialize the AllEventConsumptionStrategy.

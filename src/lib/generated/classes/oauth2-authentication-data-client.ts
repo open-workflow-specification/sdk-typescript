@@ -44,7 +44,7 @@ export interface OAuth2AuthenticationDataClientConstructor {
  */
 export class OAuth2AuthenticationDataClient extends ObjectHydrator<Specification.OAuth2AuthenticationDataClient> {
   /**
-   * Instanciates a new instance of the OAuth2AuthenticationDataClient class.
+   * Instantiates a new instance of the OAuth2AuthenticationDataClient class.
    * Initializes properties based on the provided model if it is an object.
    *
    * @param model - Optional partial model object to initialize the OAuth2AuthenticationDataClient.

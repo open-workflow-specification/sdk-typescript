@@ -45,7 +45,7 @@ export interface RaiseTaskConfigurationConstructor {
  */
 export class RaiseTaskConfiguration extends ObjectHydrator<Specification.RaiseTaskConfiguration> {
   /**
-   * Instanciates a new instance of the RaiseTaskConfiguration class.
+   * Instantiates a new instance of the RaiseTaskConfiguration class.
    * Initializes properties based on the provided model if it is an object.
    *
    * @param model - Optional partial model object to initialize the RaiseTaskConfiguration.

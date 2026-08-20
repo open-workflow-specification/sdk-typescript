@@ -44,7 +44,7 @@ export interface BasicAuthenticationPropertiesConstructor {
  */
 export class BasicAuthenticationProperties extends ObjectHydrator<Specification.BasicAuthenticationProperties> {
   /**
-   * Instanciates a new instance of the BasicAuthenticationProperties class.
+   * Instantiates a new instance of the BasicAuthenticationProperties class.
    * Initializes properties based on the provided model if it is an object.
    *
    * @param model - Optional partial model object to initialize the BasicAuthenticationProperties.

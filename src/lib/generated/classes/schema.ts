@@ -45,7 +45,7 @@ export interface SchemaConstructor {
  */
 export class Schema extends ObjectHydrator<Specification.Schema> {
   /**
-   * Instanciates a new instance of the Schema class.
+   * Instantiates a new instance of the Schema class.
    * Initializes properties based on the provided model if it is an object.
    *
    * @param model - Optional partial model object to initialize the Schema.

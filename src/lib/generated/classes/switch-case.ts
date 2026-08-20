@@ -43,7 +43,7 @@ export interface SwitchCaseConstructor {
  */
 export class SwitchCase extends ObjectHydrator<Specification.SwitchCase> {
   /**
-   * Instanciates a new instance of the SwitchCase class.
+   * Instantiates a new instance of the SwitchCase class.
    * Initializes properties based on the provided model if it is an object.
    *
    * @param model - Optional partial model object to initialize the SwitchCase.

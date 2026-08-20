@@ -45,7 +45,7 @@ export interface ListenTaskConfigurationConstructor {
  */
 export class ListenTaskConfiguration extends ObjectHydrator<Specification.ListenTaskConfiguration> {
   /**
-   * Instanciates a new instance of the ListenTaskConfiguration class.
+   * Instantiates a new instance of the ListenTaskConfiguration class.
    * Initializes properties based on the provided model if it is an object.
    *
    * @param model - Optional partial model object to initialize the ListenTaskConfiguration.

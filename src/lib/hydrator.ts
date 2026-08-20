@@ -22,7 +22,7 @@ import { deepCopy, isObject } from './utils';
  */
 export class ObjectHydrator<T> {
   /**
-   * Instanciates a new instance of the ObjectHydrator class.
+   * Instantiates a new instance of the ObjectHydrator class.
    * Copies the own properties of the provided model onto the instance if it is an object.
    *
    * @param model - Optional partial model object to initialize the instance.
@@ -53,7 +53,7 @@ export class ObjectHydrator<T> {
  */
 export class ArrayHydrator<T> extends Array<T> {
   /**
-   * Instanciates a new instance of the ArrayHydrator class.
+   * Instantiates a new instance of the ArrayHydrator class.
    * Copies the elements of the provided model onto the instance if it is an array.
    *
    * Discriminates on the model's runtime type rather than on its numeric coercion. `Number([])` is 0

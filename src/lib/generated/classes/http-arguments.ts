@@ -46,7 +46,7 @@ export interface HTTPArgumentsConstructor {
  */
 export class HTTPArguments extends ObjectHydrator<Specification.HTTPArguments> {
   /**
-   * Instanciates a new instance of the HTTPArguments class.
+   * Instantiates a new instance of the HTTPArguments class.
    * Initializes properties based on the provided model if it is an object.
    *
    * @param model - Optional partial model object to initialize the HTTPArguments.

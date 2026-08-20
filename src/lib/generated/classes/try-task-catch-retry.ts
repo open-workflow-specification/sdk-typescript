@@ -48,7 +48,7 @@ export interface TryTaskCatchRetryConstructor {
  */
 export class TryTaskCatchRetry extends ObjectHydrator<Specification.TryTaskCatchRetry> {
   /**
-   * Instanciates a new instance of the TryTaskCatchRetry class.
+   * Instantiates a new instance of the TryTaskCatchRetry class.
    * Initializes properties based on the provided model if it is an object.
    *
    * @param model - Optional partial model object to initialize the TryTaskCatchRetry.

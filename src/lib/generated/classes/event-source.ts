@@ -43,7 +43,7 @@ export interface EventSourceConstructor {
  */
 export class EventSource extends ObjectHydrator<Specification.EventSource> {
   /**
-   * Instanciates a new instance of the EventSource class.
+   * Instantiates a new instance of the EventSource class.
    * Initializes properties based on the provided model if it is an object.
    *
    * @param model - Optional partial model object to initialize the EventSource.

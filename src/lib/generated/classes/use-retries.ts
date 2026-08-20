@@ -45,7 +45,7 @@ export interface UseRetriesConstructor {
  */
 export class UseRetries extends ObjectHydrator<Specification.UseRetries> {
   /**
-   * Instanciates a new instance of the UseRetries class.
+   * Instantiates a new instance of the UseRetries class.
    * Initializes properties based on the provided model if it is an object.
    *
    * @param model - Optional partial model object to initialize the UseRetries.

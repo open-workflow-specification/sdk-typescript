@@ -45,7 +45,7 @@ export interface InputConstructor {
  */
 export class Input extends ObjectHydrator<Specification.Input> {
   /**
-   * Instanciates a new instance of the Input class.
+   * Instantiates a new instance of the Input class.
    * Initializes properties based on the provided model if it is an object.
    *
    * @param model - Optional partial model object to initialize the Input.

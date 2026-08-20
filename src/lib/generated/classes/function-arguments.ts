@@ -43,7 +43,7 @@ export interface FunctionArgumentsConstructor {
  */
 export class FunctionArguments extends ObjectHydrator<Specification.FunctionArguments> {
   /**
-   * Instanciates a new instance of the FunctionArguments class.
+   * Instantiates a new instance of the FunctionArguments class.
    * Initializes properties based on the provided model if it is an object.
    *
    * @param model - Optional partial model object to initialize the FunctionArguments.

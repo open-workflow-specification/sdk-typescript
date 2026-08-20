@@ -43,7 +43,7 @@ export interface EventDataschemaConstructor {
  */
 export class EventDataschema extends ObjectHydrator<Specification.EventDataschema> {
   /**
-   * Instanciates a new instance of the EventDataschema class.
+   * Instantiates a new instance of the EventDataschema class.
    * Initializes properties based on the provided model if it is an object.
    *
    * @param model - Optional partial model object to initialize the EventDataschema.

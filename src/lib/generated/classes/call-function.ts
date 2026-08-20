@@ -50,7 +50,7 @@ export interface CallFunctionConstructor {
  */
 export class CallFunction extends _TaskBase {
   /**
-   * Instanciates a new instance of the CallFunction class.
+   * Instantiates a new instance of the CallFunction class.
    * Initializes properties based on the provided model if it is an object.
    *
    * @param model - Optional partial model object to initialize the CallFunction.

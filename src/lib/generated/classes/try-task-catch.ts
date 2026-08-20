@@ -47,7 +47,7 @@ export interface TryTaskCatchConstructor {
  */
 export class TryTaskCatch extends ObjectHydrator<Specification.TryTaskCatch> {
   /**
-   * Instanciates a new instance of the TryTaskCatch class.
+   * Instantiates a new instance of the TryTaskCatch class.
    * Initializes properties based on the provided model if it is an object.
    *
    * @param model - Optional partial model object to initialize the TryTaskCatch.

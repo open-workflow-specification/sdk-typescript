@@ -45,7 +45,7 @@ export interface RunContainerConstructor {
  */
 export class RunContainer extends ObjectHydrator<Specification.RunContainer> {
   /**
-   * Instanciates a new instance of the RunContainer class.
+   * Instantiates a new instance of the RunContainer class.
    * Initializes properties based on the provided model if it is an object.
    *
    * @param model - Optional partial model object to initialize the RunContainer.

@@ -45,7 +45,7 @@ export interface OutputConstructor {
  */
 export class Output extends ObjectHydrator<Specification.Output> {
   /**
-   * Instanciates a new instance of the Output class.
+   * Instantiates a new instance of the Output class.
    * Initializes properties based on the provided model if it is an object.
    *
    * @param model - Optional partial model object to initialize the Output.

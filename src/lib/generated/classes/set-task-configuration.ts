@@ -43,7 +43,7 @@ export interface SetTaskConfigurationConstructor {
  */
 export class SetTaskConfiguration extends ObjectHydrator<Specification.SetTaskConfiguration> {
   /**
-   * Instanciates a new instance of the SetTaskConfiguration class.
+   * Instantiates a new instance of the SetTaskConfiguration class.
    * Initializes properties based on the provided model if it is an object.
    *
    * @param model - Optional partial model object to initialize the SetTaskConfiguration.

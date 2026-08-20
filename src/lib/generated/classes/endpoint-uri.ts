@@ -43,7 +43,7 @@ export interface EndpointUriConstructor {
  */
 export class EndpointUri extends ObjectHydrator<Specification.EndpointUri> {
   /**
-   * Instanciates a new instance of the EndpointUri class.
+   * Instantiates a new instance of the EndpointUri class.
    * Initializes properties based on the provided model if it is an object.
    *
    * @param model - Optional partial model object to initialize the EndpointUri.

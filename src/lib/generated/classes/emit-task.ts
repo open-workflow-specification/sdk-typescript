@@ -50,7 +50,7 @@ export interface EmitTaskConstructor {
  */
 export class EmitTask extends _TaskBase {
   /**
-   * Instanciates a new instance of the EmitTask class.
+   * Instantiates a new instance of the EmitTask class.
    * Initializes properties based on the provided model if it is an object.
    *
    * @param model - Optional partial model object to initialize the EmitTask.

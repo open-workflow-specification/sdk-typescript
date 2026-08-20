@@ -43,7 +43,7 @@ export interface ContainerPortsConstructor {
  */
 export class ContainerPorts extends ObjectHydrator<Specification.ContainerPorts> {
   /**
-   * Instanciates a new instance of the ContainerPorts class.
+   * Instantiates a new instance of the ContainerPorts class.
    * Initializes properties based on the provided model if it is an object.
    *
    * @param model - Optional partial model object to initialize the ContainerPorts.

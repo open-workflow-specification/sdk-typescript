@@ -60,7 +60,7 @@ export interface TaskConstructor {
  */
 export class Task extends ObjectHydrator<Specification.Task> {
   /**
-   * Instanciates a new instance of the Task class.
+   * Instantiates a new instance of the Task class.
    * Initializes properties based on the provided model if it is an object.
    *
    * @param model - Optional partial model object to initialize the Task.

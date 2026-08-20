@@ -45,7 +45,7 @@ export interface SubflowConfigurationConstructor {
  */
 export class SubflowConfiguration extends ObjectHydrator<Specification.SubflowConfiguration> {
   /**
-   * Instanciates a new instance of the SubflowConfiguration class.
+   * Instantiates a new instance of the SubflowConfiguration class.
    * Initializes properties based on the provided model if it is an object.
    *
    * @param model - Optional partial model object to initialize the SubflowConfiguration.

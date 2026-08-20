@@ -43,7 +43,7 @@ export interface ErrorFilterConstructor {
  */
 export class ErrorFilter extends ObjectHydrator<Specification.ErrorFilter> {
   /**
-   * Instanciates a new instance of the ErrorFilter class.
+   * Instantiates a new instance of the ErrorFilter class.
    * Initializes properties based on the provided model if it is an object.
    *
    * @param model - Optional partial model object to initialize the ErrorFilter.

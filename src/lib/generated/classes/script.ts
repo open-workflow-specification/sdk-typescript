@@ -45,7 +45,7 @@ export interface ScriptConstructor {
  */
 export class Script extends ObjectHydrator<Specification.Script> {
   /**
-   * Instanciates a new instance of the Script class.
+   * Instantiates a new instance of the Script class.
    * Initializes properties based on the provided model if it is an object.
    *
    * @param model - Optional partial model object to initialize the Script.

@@ -122,14 +122,18 @@ export class ${name} extends ${baseClass ? '_' + baseClass : `ObjectHydrator<Spe
     model: Partial<WorkflowIntersection>,
     format: 'yaml' | 'json' = 'yaml',
     normalize: boolean = true,
+    validate: boolean = true,
   ): string {
     const workflow = new Workflow(model);
-    workflow.validate();
-    const normalized = normalize ? workflow.normalize() : workflow;
-    if (format === 'json') {
-      return JSON.stringify(normalized);
+    if (validate) {
+      workflow.validate();
     }
-    return yaml.dump(normalized);
+    const normalized = normalize ? workflow.normalize() : workflow;
+    const json = JSON.stringify(normalized);
+    if (format === 'json') {
+      return json;
+    }
+    return yaml.dump(JSON.parse(json));
   }
 
   static toGraph(model: Partial<WorkflowIntersection>, options?: GraphBuildOptions): Graph {
@@ -144,10 +148,11 @@ export class ${name} extends ${baseClass ? '_' + baseClass : `ObjectHydrator<Spe
    * Serializes the workflow to YAML or JSON
    * @param format The format, 'yaml' or 'json', default is 'yaml'
    * @param normalize If the workflow should be normalized before serialization, default true
+   * @param validate If the workflow should be validated before serialization, default true
    * @returns A string representation of the workflow
    */
-  serialize(format: 'yaml' | 'json' = 'yaml', normalize: boolean = true): string {
-    return Workflow.serialize(this as unknown as WorkflowIntersection, format, normalize);
+  serialize(format: 'yaml' | 'json' = 'yaml', normalize: boolean = true, validate: boolean = true): string {
+    return Workflow.serialize(this as unknown as WorkflowIntersection, format, normalize, validate);
   }
 
   /**
@@ -185,9 +190,10 @@ export const _${name} = ${name} as ${name}Constructor${
    * @param workflow The workflow to serialize
    * @param format The format, 'yaml' or 'json', default is 'yaml'
    * @param normalize If the workflow should be normalized before serialization, default true
+   * @param validate If the workflow should be validated before serialization, default true
    * @returns A string representation of the workflow
    */
-  serialize(workflow: Partial<WorkflowIntersection>, format?: 'yaml' | 'json', normalize?: boolean): string;
+  serialize(workflow: Partial<WorkflowIntersection>, format?: 'yaml' | 'json', normalize?: boolean, validate?: boolean): string;
 
   /**
    * Creates a directed graph representation of the provided workflow

@@ -115,7 +115,6 @@ export class Workflow extends ObjectHydrator<Specification.Workflow> {
     if (format === 'json') {
       return json;
     }
-    // js-yaml only handles plain objects
     return yaml.dump(JSON.parse(json));
   }
 

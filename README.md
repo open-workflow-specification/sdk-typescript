@@ -1,4 +1,5 @@
 ![Node CI](https://github.com/open-workflow-specification/sdk-typescript/workflows/Node%20CI/badge.svg) [![Gitpod ready-to-code](https://img.shields.io/badge/Gitpod-ready--to--code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/open-workflow-specification/sdk-typescript)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fopen-workflow-specification%2Fsdk-typescript.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fopen-workflow-specification%2Fsdk-typescript?ref=badge_shield)
 
 - [Open Workflow Specification - TypeScript SDK](#open-workflow-specification---typescript-sdk)
   - [Status](#status)
@@ -486,3 +487,7 @@ npm run codegen
 ```
 
 If you're interested in contributing, the [contributing guide](/CONTRIBUTING.md) and [tooling architecture](/tools/README.md) are the best places to start.
+
+
+## License
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fopen-workflow-specification%2Fsdk-typescript.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fopen-workflow-specification%2Fsdk-typescript?ref=badge_large)

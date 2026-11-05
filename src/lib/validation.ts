@@ -24,23 +24,61 @@ import { getLifecycleHooks } from './lifecycle-hooks';
 import { Specification } from './generated/definitions';
 import { DslValidationError, SchemaValidationError, WorkflowValidationError } from './errors';
 
-const ajv = new Ajv({
-  schemas: [workflowSchema],
-  strict: false,
-});
-addFormats(ajv);
+/**
+ * The AJV instance holding the workflow schema, created the first time a type is validated
+ */
+let ajv: Ajv | undefined;
 
 /**
- * A Map of validation functions, where the key is the name of the schema to validate with
+ * Returns the AJV instance holding the workflow schema, creating it on first use.
+ * AJV generates code from strings to compile a schema, so nothing is compiled until a validation is requested.
+ * @returns The AJV instance
  */
-const validators: Map<string, ValidateFunction> = new Map<string, ValidateFunction>(
-  Object.entries(validationPointers).map(([typeName, jsonPointer]) => {
-    if (!jsonPointer) throw new Error(`No JSON pointer provided for type '${typeName}'`);
-    const validate = ajv.getSchema(jsonPointer);
-    if (!validate) throw new Error(`Unable to find schema '${jsonPointer}' for type '${typeName}'`);
-    return [typeName, validate as ValidateFunction];
-  }),
-);
+const getAjv = (): Ajv => {
+  if (!ajv) {
+    ajv = new Ajv({
+      schemas: [workflowSchema],
+      strict: false,
+    });
+    addFormats(ajv);
+  }
+  return ajv;
+};
+
+/**
+ * A Map of JSON pointers to the schemas to validate with, where the key is the name of the type
+ */
+const jsonPointers: Map<string, string> = new Map<string, string>(Object.entries(validationPointers));
+
+/**
+ * A Map of the validation functions compiled so far, where the key is the name of the schema to validate with
+ */
+const validators: Map<string, ValidateFunction> = new Map<string, ValidateFunction>();
+
+/**
+ * Compiles the validation function for the provided type.
+ * @param typeName The data type to compile the validation function for
+ * @param jsonPointer The JSON pointer to the schema of the type
+ * @returns The validation function
+ */
+const compileValidator = (typeName: string, jsonPointer: string | undefined): ValidateFunction => {
+  if (!jsonPointer) throw new Error(`No JSON pointer provided for type '${typeName}'`);
+  const validate = getAjv().getSchema(jsonPointer);
+  if (!validate) throw new Error(`Unable to find schema '${jsonPointer}' for type '${typeName}'`);
+  return validate as ValidateFunction;
+};
+
+/**
+ * Returns the validation function for the provided type, compiling it the first time it is requested.
+ * @param typeName The data type to validate
+ * @returns The validation function, or undefined if the type is unknown
+ */
+const getValidator = (typeName: string): ValidateFunction | undefined => {
+  if (!validators.has(typeName) && jsonPointers.has(typeName)) {
+    validators.set(typeName, compileValidator(typeName, jsonPointers.get(typeName)));
+  }
+  return validators.get(typeName);
+};
 
 /**
  * Renders a JSON Pointer for display in an error message, labelling the root explicitly.
@@ -57,7 +95,7 @@ const displayPath = (path: string): string => (path === '' ? '<root>' : path);
  * @param data The data to validate
  */
 const validateSchema = <T>(typeName: string, data: T): void => {
-  const validateFn: ValidateFunction | undefined = validators.get(typeName);
+  const validateFn: ValidateFunction | undefined = getValidator(typeName);
   if (!validateFn) {
     throw new Error(`Unable to find a validation function for '${typeName}'`);
   }

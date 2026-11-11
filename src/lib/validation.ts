@@ -15,32 +15,13 @@
  *
  */
 
-import Ajv, { ValidateFunction } from 'ajv/dist/2020.js';
-import addFormats from 'ajv-formats';
-import workflowSchema from './generated/schema/workflow.json';
-import { ChildType, childTypes, validationPointers } from './generated/validation';
+import type { ValidateFunction } from 'ajv/dist/2020.js';
+import { ChildType, childTypes } from './generated/validation';
 import { appendJsonPointerSegment, deepCopy, isObject } from './utils';
 import { getLifecycleHooks } from './lifecycle-hooks';
+import { getValidator } from './validators';
 import { Specification } from './generated/definitions';
 import { DslValidationError, SchemaValidationError, WorkflowValidationError } from './errors';
-
-const ajv = new Ajv({
-  schemas: [workflowSchema],
-  strict: false,
-});
-addFormats(ajv);
-
-/**
- * A Map of validation functions, where the key is the name of the schema to validate with
- */
-const validators: Map<string, ValidateFunction> = new Map<string, ValidateFunction>(
-  Object.entries(validationPointers).map(([typeName, jsonPointer]) => {
-    if (!jsonPointer) throw new Error(`No JSON pointer provided for type '${typeName}'`);
-    const validate = ajv.getSchema(jsonPointer);
-    if (!validate) throw new Error(`Unable to find schema '${jsonPointer}' for type '${typeName}'`);
-    return [typeName, validate as ValidateFunction];
-  }),
-);
 
 /**
  * Renders a JSON Pointer for display in an error message, labelling the root explicitly.
@@ -54,10 +35,10 @@ const displayPath = (path: string): string => (path === '' ? '<root>' : path);
  * The schema is structurally recursive (AJV walks the whole subtree via `$ref`s), so this only
  * needs to run once, at the root of a `validate` call.
  * @param typeName The data type to validate
+ * @param validateFn The validation function of the type, or undefined if the type is unknown
  * @param data The data to validate
  */
-const validateSchema = <T>(typeName: string, data: T): void => {
-  const validateFn: ValidateFunction | undefined = validators.get(typeName);
+const validateSchema = <T>(typeName: string, validateFn: ValidateFunction | undefined, data: T): void => {
   if (!validateFn) {
     throw new Error(`Unable to find a validation function for '${typeName}'`);
   }
@@ -176,7 +157,10 @@ const validateDescendants = (
  * Validates the provided data or throws an error.
  * Runs the JSON schema validation for `typeName` (which structurally validates the whole subtree),
  * then recursively invokes the lifecycle hooks of every nested type, passing the root workflow as
- * DSL-level validation context. Any failure is thrown as a {@link WorkflowValidationError}.
+ * DSL-level validation context. Any failure is thrown as a {@link WorkflowValidationError}, and so is an unknown
+ * `typeName`. The validation function of `typeName` is compiled before that, the first time the type is validated.
+ * An error raised while compiling it, such as an `EvalError` where code generation from strings is disallowed, is
+ * thrown unchanged, since it does not mean that the data is invalid.
  * @param typeName The data type to validate
  * @param data The data to validate
  * @param workflow A workflow instance, used for DSL level validation. Defaults to `data`, i.e. the root of the validation
@@ -184,9 +168,10 @@ const validateDescendants = (
  */
 export const validate = <T>(typeName: string, data: T, workflow?: Partial<Specification.Workflow>) => {
   const root = workflow ?? (data as unknown as Partial<Specification.Workflow>);
+  const validateFn = getValidator(typeName);
   withValidationContext(typeName, '', () => {
     getLifecycleHooks(typeName)?.preValidation?.(data, root);
-    validateSchema(typeName, data);
+    validateSchema(typeName, validateFn, data);
     getLifecycleHooks(typeName)?.postValidation?.(data, root);
   });
   validateDescendants(typeName, data, root, '');

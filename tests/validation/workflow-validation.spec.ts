@@ -297,6 +297,18 @@ describe('Workflow validation - WorkflowValidationError', () => {
     expect((error as DslValidationError).typeName).toBe('Workflow');
   });
 
+  it('should throw a DslValidationError at the root for an unknown type', () => {
+    for (const typeName of ['Unknown', 'toString', '__proto__']) {
+      const error = captureError(() => validate(typeName, {}));
+      expect(error, typeName).toBeInstanceOf(DslValidationError);
+      expect((error as DslValidationError).message).toBe(
+        `Validation failed at '<root>' (${typeName}): Unable to find a validation function for '${typeName}'`,
+      );
+      expect((error as DslValidationError).path).toBe('');
+      expect((error as DslValidationError).typeName).toBe(typeName);
+    }
+  });
+
   it('should throw a SchemaValidationError carrying the AJV errors for a structural failure', () => {
     const workflow = new Classes.Workflow({ document });
     const error = captureError(() => validate('Workflow', workflow));

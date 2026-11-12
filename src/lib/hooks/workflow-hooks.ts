@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import satisfies from 'semver/functions/satisfies';
+import satisfies from 'semver/functions/satisfies.js';
 
 import { LifecycleHooks } from '../lifecycle-hooks';
 import { Specification } from '../generated/definitions';

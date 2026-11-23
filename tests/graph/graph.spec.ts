@@ -6,7 +6,7 @@ describe('Workflow to Graph', () => {
   it('should build a graph for a workflow with a Set task, using the buildGraph function', () => {
     const workflow = Classes.Workflow.deserialize(`
 document:
-  dsl: '1.0.3'
+  dsl: '1.1.0'
   namespace: test
   name: set
   version: '0.1.0'
@@ -32,7 +32,7 @@ do:
   it('should build a graph for a workflow with a Set task, using the instance method', () => {
     const workflow = Classes.Workflow.deserialize(`
 document:
-  dsl: '1.0.3'
+  dsl: '1.1.0'
   namespace: test
   name: set
   version: '0.1.0'
@@ -57,7 +57,7 @@ do:
   it('should build a graph for a workflow with a Set task, using the static method', () => {
     const workflow = {
       document: {
-        dsl: '1.0.3',
+        dsl: '1.1.0',
         name: 'set',
         version: '1.0.0',
         namespace: 'test',
@@ -89,7 +89,7 @@ do:
   it('should build a graph for a workflow with multiple Set tasks', () => {
     const workflow = Classes.Workflow.deserialize(`
 document:
-  dsl: '1.0.3'
+  dsl: '1.1.0'
   namespace: test
   name: set
   version: '0.1.0'
@@ -125,7 +125,7 @@ do:
   it('should build a graph for a workflow with a task containing an If clause, producing an alternative edge', () => {
     const workflow = Classes.Workflow.deserialize(`
 document:
-  dsl: '1.0.3'
+  dsl: '1.1.0'
   namespace: test
   name: set
   version: '0.1.0'
@@ -159,7 +159,7 @@ do:
   it('should build a graph for a workflow with a For task, producing a subgraph', () => {
     const workflow = Classes.Workflow.deserialize(`
 document:
-  dsl: '1.0.3'
+  dsl: '1.1.0'
   namespace: test
   name: for-example
   version: '0.1.0'
@@ -231,7 +231,7 @@ do:
   it('should merge duplicate switch transitions that resolve to the same target', () => {
     const workflow = Classes.Workflow.deserialize(`
 document:
-  dsl: '1.0.3'
+  dsl: '1.1.0'
   namespace: test
   name: switch
   version: '0.1.0'
@@ -261,7 +261,7 @@ do:
   it('should build a graph for a workflow with a cyclic then directive (taskA -> taskB -> taskA)', () => {
     const workflow = Classes.Workflow.deserialize(`
 document:
-  dsl: '1.0.3'
+  dsl: '1.1.0'
   namespace: test
   name: cycle-test
   version: '0.1.0'
@@ -293,7 +293,7 @@ do:
   it('should build a graph for a workflow with a self-referencing then directive', () => {
     const workflow = Classes.Workflow.deserialize(`
 document:
-  dsl: '1.0.3'
+  dsl: '1.1.0'
   namespace: test
   name: self-loop
   version: '0.1.0'
@@ -318,7 +318,7 @@ do:
   it('should build a graph for a recursive workflow with DoTask cycles', () => {
     const workflow = Classes.Workflow.deserialize(`
 document:
-  dsl: '1.0.3'
+  dsl: '1.1.0'
   namespace: test
   name: recursive-workflow
   version: '0.1.0'
@@ -373,7 +373,7 @@ do:
   it('should correctly resolve then:end from a deeply nested task (DoTask inside DoTask)', () => {
     const workflow = Classes.Workflow.deserialize(`
 document:
-  dsl: '1.0.3'
+  dsl: '1.1.0'
   namespace: test
   name: nested-end
   version: '0.1.0'
@@ -393,7 +393,7 @@ do:
   it('should mark the root graph with the Root node type and attach Start/End port nodes', () => {
     const workflow = Classes.Workflow.deserialize(`
 document:
-  dsl: '1.0.3'
+  dsl: '1.1.0'
   namespace: test
   name: root-shape
   version: '0.1.0'
@@ -412,7 +412,7 @@ do:
   it('should build a graph for a workflow with a Call task', () => {
     const workflow = Classes.Workflow.deserialize(`
 document:
-  dsl: '1.0.3'
+  dsl: '1.1.0'
   namespace: test
   name: call-example
   version: '0.1.0'
@@ -439,7 +439,7 @@ do:
   it('should build a graph for a workflow with an Emit task', () => {
     const workflow = Classes.Workflow.deserialize(`
 document:
-  dsl: '1.0.3'
+  dsl: '1.1.0'
   namespace: test
   name: emit-example
   version: '0.1.0'
@@ -466,7 +466,7 @@ do:
   it('should build a graph for a workflow with a Fork task, producing a subgraph with one node per branch', () => {
     const workflow = Classes.Workflow.deserialize(`
 document:
-  dsl: '1.0.3'
+  dsl: '1.1.0'
   namespace: test
   name: fork-example
   version: '0.1.0'
@@ -522,7 +522,7 @@ do:
   it('should build a graph for a workflow with a standalone Listen task', () => {
     const workflow = Classes.Workflow.deserialize(`
 document:
-  dsl: '1.0.3'
+  dsl: '1.1.0'
   namespace: test
   name: listen-example
   version: '0.1.0'
@@ -551,7 +551,7 @@ do:
   it('should build a graph for a workflow with a Raise task', () => {
     const workflow = Classes.Workflow.deserialize(`
 document:
-  dsl: '1.0.3'
+  dsl: '1.1.0'
   namespace: test
   name: raise-example
   version: '0.1.0'
@@ -578,7 +578,7 @@ do:
   it('should build a graph for a workflow with a Run task', () => {
     const workflow = Classes.Workflow.deserialize(`
 document:
-  dsl: '1.0.3'
+  dsl: '1.1.0'
   namespace: test
   name: run-example
   version: '0.1.0'
@@ -603,7 +603,7 @@ do:
   it('should build a graph for a workflow with a Wait task', () => {
     const workflow = Classes.Workflow.deserialize(`
 document:
-  dsl: '1.0.3'
+  dsl: '1.1.0'
   namespace: test
   name: wait-example
   version: '0.1.0'
@@ -627,7 +627,7 @@ do:
   it('should build a graph for a workflow with an explicit Do task, producing a subgraph', () => {
     const workflow = Classes.Workflow.deserialize(`
 document:
-  dsl: '1.0.3'
+  dsl: '1.1.0'
   namespace: test
   name: do-example
   version: '0.1.0'
@@ -671,7 +671,7 @@ do:
   it('should build a graph for a Try task without a catch handler (catch without do)', () => {
     const workflow = Classes.Workflow.deserialize(`
 document:
-  dsl: '1.0.3'
+  dsl: '1.1.0'
   namespace: test
   name: try-nocatch
   version: '0.1.0'
@@ -701,7 +701,7 @@ do:
   it('should build a graph for a Try task with a catch handler containing tasks, producing a catch subgraph', () => {
     const workflow = Classes.Workflow.deserialize(`
 document:
-  dsl: '1.0.3'
+  dsl: '1.1.0'
   namespace: test
   name: try-catch
   version: '0.1.0'
@@ -728,10 +728,84 @@ do:
     expect(catchSubgraph.nodes.some((n) => n.label === 'recover')).toBe(true);
   });
 
+  it('should route the error path of a Try task to catch.then, keeping the success path on the default flow', () => {
+    const workflow = Classes.Workflow.deserialize(`
+document:
+  dsl: '1.1.0'
+  namespace: test
+  name: try-catch-then
+  version: '0.1.0'
+do:
+  - protect:
+      try:
+        - attempt:
+            set:
+              ok: true
+      catch:
+        as: err
+        then: handleError
+  - next:
+      set:
+        done: true
+  - handleError:
+      set:
+        failed: true`);
+    const graph = buildGraph(workflow);
+    const tryCatchGraph = graph.nodes.find((node) => node.label === 'protect') as Graph;
+    const catchNode = tryCatchGraph.nodes.find((n) => n.type === GraphNodeType.Catch)!;
+    const edges = [...graph.edges, ...tryCatchGraph.edges];
+
+    // error path: catch -> handleError, and no longer catch -> container exit
+    expect(edges.find((e) => e.sourceId === catchNode.id && e.targetId === '/do/handleError')).toBeDefined();
+    expect(edges.find((e) => e.sourceId === catchNode.id && e.targetId === tryCatchGraph.exitNode!.id)).toBeUndefined();
+    // success path: try exit -> container exit -> next
+    expect(
+      edges.find((e) => e.sourceId === 'port-/do/protect/try-exit-node' && e.targetId === tryCatchGraph.exitNode!.id),
+    ).toBeDefined();
+    expect(edges.find((e) => e.sourceId === tryCatchGraph.exitNode!.id && e.targetId === '/do/next')).toBeDefined();
+  });
+
+  it('should route the exit of a catch.do subgraph to catch.then', () => {
+    const workflow = Classes.Workflow.deserialize(`
+document:
+  dsl: '1.1.0'
+  namespace: test
+  name: try-catch-do-then
+  version: '0.1.0'
+do:
+  - protect:
+      try:
+        - attempt:
+            set:
+              ok: true
+      catch:
+        as: err
+        do:
+          - recover:
+              set:
+                recovered: true
+        then: end
+  - next:
+      set:
+        done: true`);
+    const graph = buildGraph(workflow);
+    const tryCatchGraph = graph.nodes.find((node) => node.label === 'protect') as Graph;
+    const catchSubgraph = tryCatchGraph.nodes.find((n) => n.type === GraphNodeType.Catch) as Graph;
+    const edges = [...graph.edges, ...tryCatchGraph.edges];
+
+    expect(
+      edges.find((e) => e.sourceId === catchSubgraph.exitNode!.id && e.targetId === 'root-exit-node'),
+    ).toBeDefined();
+    expect(
+      edges.find((e) => e.sourceId === catchSubgraph.exitNode!.id && e.targetId === tryCatchGraph.exitNode!.id),
+    ).toBeUndefined();
+    expect(edges.find((e) => e.sourceId === tryCatchGraph.exitNode!.id && e.targetId === '/do/next')).toBeDefined();
+  });
+
   it('should build a graph for a Switch task with a default case', () => {
     const workflow = Classes.Workflow.deserialize(`
 document:
-  dsl: '1.0.3'
+  dsl: '1.1.0'
   namespace: test
   name: switch-default
   version: '0.1.0'
@@ -768,7 +842,7 @@ do:
   it('should honor an explicit then:exit flow directive', () => {
     const workflow = Classes.Workflow.deserialize(`
 document:
-  dsl: '1.0.3'
+  dsl: '1.1.0'
   namespace: test
   name: then-exit
   version: '0.1.0'

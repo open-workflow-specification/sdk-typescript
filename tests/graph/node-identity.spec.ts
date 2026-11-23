@@ -11,7 +11,7 @@ import {
 import { Workflow } from '../../src/lib/generated/definitions/specification';
 
 const document = {
-  dsl: '1.0.3',
+  dsl: '1.1.0',
   namespace: 'test',
   name: 'node-identity',
   version: '0.1.0',

@@ -114,7 +114,7 @@ import { Classes } from '@openworkflowspec/sdk';
 // const text = await fetch('https://myserver.com/my-workflow-definition.json');
 const text = `
 document:
-  dsl: 1.0.3
+  dsl: 1.1.0
   name: test
   version: 1.0.0
   namespace: default
@@ -145,7 +145,7 @@ import { Classes, Specification, validate } from '@openworkflowspec/sdk';
 // Simply cast an object:
 const workflow = {
   document: {
-    dsl: '1.0.3',
+    dsl: '1.1.0',
     name: 'test',
     version: '1.0.0',
     namespace: 'default',
@@ -181,7 +181,7 @@ import { Classes, validate } from '@openworkflowspec/sdk';
 // Simply use the constructor
 const workflow = new Classes.Workflow({
   document: {
-    dsl: '1.0.3',
+    dsl: '1.1.0',
     name: 'test',
     version: '1.0.0',
     namespace: 'default',
@@ -224,7 +224,7 @@ You can use the fluent API to build a validated and normalized workflow definiti
 import { documentBuilder, setTaskBuilder, taskListBuilder, workflowBuilder } from '@openworkflowspec/sdk';
 
 const workflow = workflowBuilder(/*workflowObject*/)
-  .document(documentBuilder().dsl('1.0.3').name('test').version('1.0.0').namespace('default').build())
+  .document(documentBuilder().dsl('1.1.0').name('test').version('1.0.0').namespace('default').build())
   .do(
     taskListBuilder()
       .push({
@@ -322,7 +322,7 @@ import { buildGraph } from '@openworkflowspec/sdk';
 
 const workflow = {
   document: {
-    dsl: '1.0.3',
+    dsl: '1.1.0',
     name: 'using-plain-object',
     version: '1.0.0',
     namespace: 'default',
@@ -409,7 +409,7 @@ import { convertToMermaidCode, MermaidDiagram } from '@openworkflowspec/sdk';
 
 const workflow = {
   document: {
-    dsl: '1.0.3',
+    dsl: '1.1.0',
     name: 'using-plain-object',
     version: '1.0.0',
     namespace: 'default',

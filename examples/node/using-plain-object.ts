@@ -2,7 +2,7 @@ import { Classes, Specification, validate } from /*'@openworkflowspec/sdk';*/ '.
 
 const workflowDefinition = {
   document: {
-    dsl: '1.0.3',
+    dsl: '1.1.0',
     name: 'using-plain-object',
     version: '1.0.0',
     namespace: 'default',

@@ -22,7 +22,7 @@ import {
 
 try {
   const workflow = workflowBuilder()
-    .document(documentBuilder().dsl('1.0.3').name('using-fluent-api').version('1.0.0').namespace('default').build())
+    .document(documentBuilder().dsl('1.1.0').name('using-fluent-api').version('1.0.0').namespace('default').build())
     .do(
       taskListBuilder()
         .push({

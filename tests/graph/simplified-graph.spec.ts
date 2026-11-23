@@ -13,7 +13,7 @@ describe('Workflow to Simplified Graph', () => {
   it('should build a simplified graph for a workflow with a Set task, using the buildFlatGraph function', () => {
     const workflow = Classes.Workflow.deserialize(`
 document:
-  dsl: '1.0.3'
+  dsl: '1.1.0'
   namespace: test
   name: set
   version: '0.1.0'
@@ -41,7 +41,7 @@ do:
   it('should build a simplified graph for a workflow with a For task, producing a subgraph', () => {
     const workflow = Classes.Workflow.deserialize(`
 document:
-  dsl: '1.0.3'
+  dsl: '1.1.0'
   namespace: test
   name: for-example
   version: '0.1.0'
@@ -86,7 +86,7 @@ do:
   it('should flatten a graph and optionally remove ports', () => {
     const workflow = Classes.Workflow.deserialize(`
 document:
-  dsl: '1.0.3'
+  dsl: '1.1.0'
   namespace: test
   name: for-example
   version: '0.1.0'
@@ -122,7 +122,7 @@ do:
   it('flattenEdges should hoist edges from nested subgraphs into a single collection', () => {
     const workflow = Classes.Workflow.deserialize(`
 document:
-  dsl: '1.0.3'
+  dsl: '1.1.0'
   namespace: test
   name: for-flatten-edges
   version: '0.1.0'
@@ -152,7 +152,7 @@ do:
   it('flattenNodes should hoist nodes from nested subgraphs and set parentId on nested entries', () => {
     const workflow = Classes.Workflow.deserialize(`
 document:
-  dsl: '1.0.3'
+  dsl: '1.1.0'
   namespace: test
   name: for-flatten-nodes
   version: '0.1.0'
@@ -185,7 +185,7 @@ do:
   it('remapEdges should collapse edges passing through entry/exit ports into direct source-to-target edges', () => {
     const workflow = Classes.Workflow.deserialize(`
 document:
-  dsl: '1.0.3'
+  dsl: '1.1.0'
   namespace: test
   name: remap-edges
   version: '0.1.0'
@@ -226,7 +226,7 @@ do:
   it('remapEdges should concatenate edge labels when traversing labelled port edges', () => {
     const workflow = Classes.Workflow.deserialize(`
 document:
-  dsl: '1.0.3'
+  dsl: '1.1.0'
   namespace: test
   name: remap-labels
   version: '0.1.0'
@@ -249,7 +249,7 @@ do:
   it('buildFlatGraph should keep inner entry/exit ports by default and drop them when removePorts is true', () => {
     const workflow = Classes.Workflow.deserialize(`
 document:
-  dsl: '1.0.3'
+  dsl: '1.1.0'
   namespace: test
   name: build-flat-defaults
   version: '0.1.0'

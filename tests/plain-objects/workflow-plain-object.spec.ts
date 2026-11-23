@@ -5,7 +5,7 @@ describe('Workflow plain object', () => {
   it('should type a plain object workflow with one task ', () => {
     const workflow: Specification.Workflow = {
       document: {
-        dsl: '1.0.3',
+        dsl: '1.1.0',
         namespace: 'examples',
         name: 'accumulate-room-readings',
         version: '0.1.0',
@@ -25,7 +25,7 @@ describe('Workflow plain object', () => {
   it('should type a plain object workflow with multiple tasks', () => {
     const workflow: Specification.Workflow = {
       document: {
-        dsl: '1.0.3',
+        dsl: '1.1.0',
         namespace: 'examples',
         name: 'accumulate-room-readings',
         version: '0.1.0',

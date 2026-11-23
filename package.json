@@ -1,8 +1,8 @@
 {
   "name": "@openworkflowspec/sdk",
-  "version": "1.0.3-alpha8",
-  "schemaVersion": "1.0.3",
-  "supportedDslVersions": ">=1.0.0-0 <=1.0.3",
+  "version": "1.1.0-alpha1",
+  "schemaVersion": "1.1.0",
+  "supportedDslVersions": ">=1.0.0-0 <=1.1.0",
   "description": "Typescript SDK for Open Workflow Specification",
   "type": "commonjs",
   "main": "./index.cjs",

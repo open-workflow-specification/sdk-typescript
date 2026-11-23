@@ -3,7 +3,7 @@ import { Workflow } from '../../src/lib/generated/definitions/specification';
 import { Classes } from '../../src/lib/generated/classes';
 
 const document = {
-  dsl: '1.0.3',
+  dsl: '1.1.0',
   namespace: 'test',
   name: 'build-options',
   version: '0.1.0',
@@ -130,7 +130,7 @@ describe('Graph build options', () => {
   it('honors the factory through the generated Workflow class', () => {
     const workflow = Classes.Workflow.deserialize(`
 document:
-  dsl: '1.0.3'
+  dsl: '1.1.0'
   namespace: test
   name: build-options
   version: '0.1.0'

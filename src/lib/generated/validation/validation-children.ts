@@ -428,6 +428,7 @@ export const childTypes: Record<string, ChildType[]> = {
     { kind: 'object', property: 'timeout', type: 'WorkflowTimeout' },
     { kind: 'object', property: 'output', type: 'Output' },
     { kind: 'object', property: 'schedule', type: 'Schedule' },
+    { kind: 'object', property: 'evaluate', type: 'Evaluate' },
   ],
   WorkflowTimeout: [{ kind: 'object', property: 'after', type: 'Duration' }],
 };

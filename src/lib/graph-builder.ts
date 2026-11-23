@@ -713,6 +713,7 @@ function buildTryCatchTaskNode(task: TryTask, context: TaskContext): Graph {
   };
   if (!trySubgraph.entryNode) throw new Error(`Missing 'entryNode' on graph id '${trySubgraph.id}'`);
   buildTransitions(trySubgraph.entryNode, tryContext);
+  const catchThen = task.catch?.then;
   if (!task.catch?.do?.length) {
     const catchNode: GraphNode = {
       task,
@@ -725,7 +726,11 @@ function buildTryCatchTaskNode(task: TryTask, context: TaskContext): Graph {
     if (!trySubgraph.exitNode) throw new Error(`Missing 'exitNode' on graph id '${trySubgraph.id}'`);
     if (!containerSubgraph.exitNode) throw new Error(`Missing 'exitNode' on graph id '${containerSubgraph.id}'`);
     buildEdge(containerSubgraph, context.knownEdges, trySubgraph.exitNode, catchNode);
-    buildEdge(containerSubgraph, context.knownEdges, catchNode, containerSubgraph.exitNode);
+    if (catchThen) {
+      buildCatchThenTransition(catchNode, catchThen, trySubgraph, containerSubgraph, context);
+    } else {
+      buildEdge(containerSubgraph, context.knownEdges, catchNode, containerSubgraph.exitNode);
+    }
   } else {
     const catchSubgraph: Graph = initGraph(
       GraphNodeType.Catch,
@@ -748,10 +753,37 @@ function buildTryCatchTaskNode(task: TryTask, context: TaskContext): Graph {
     buildTransitions(catchSubgraph.entryNode, catchContext);
     if (!catchSubgraph.exitNode) throw new Error(`Missing 'exitNode' on graph id '${catchSubgraph.exitNode}'`);
     if (!containerSubgraph.exitNode) throw new Error(`Missing 'exitNode' on graph id '${containerSubgraph.exitNode}'`);
-    buildEdge(containerSubgraph, context.knownEdges, catchSubgraph.exitNode, containerSubgraph.exitNode);
+    if (catchThen) {
+      buildCatchThenTransition(catchSubgraph, catchThen, trySubgraph, containerSubgraph, context);
+    } else {
+      buildEdge(containerSubgraph, context.knownEdges, catchSubgraph.exitNode, containerSubgraph.exitNode);
+    }
   }
   buildTransitions(containerSubgraph, context);
   return containerSubgraph;
+}
+
+/**
+ * Routes the error path of a try/catch task to its `catch.then` flow directive.
+ * When set, `catch.then` overrides the try task's own `then` for the error path, so the catch no longer
+ * leads to the container exit. The success path is kept by linking the try exit to the container exit.
+ * @param catchElement The catch node, or the catch subgraph when `catch.do` is set
+ * @param catchThen The `catch.then` flow directive
+ * @param trySubgraph The try subgraph
+ * @param containerSubgraph The try/catch container subgraph
+ * @param context The context of the try/catch task
+ */
+function buildCatchThenTransition(
+  catchElement: GraphNode | Graph,
+  catchThen: string,
+  trySubgraph: Graph,
+  containerSubgraph: Graph,
+  context: TaskContext,
+) {
+  if (!trySubgraph.exitNode) throw new Error(`Missing 'exitNode' on graph id '${trySubgraph.id}'`);
+  if (!containerSubgraph.exitNode) throw new Error(`Missing 'exitNode' on graph id '${containerSubgraph.id}'`);
+  buildEdge(containerSubgraph, context.knownEdges, trySubgraph.exitNode, containerSubgraph.exitNode);
+  buildTransition(catchElement, getNextTask(context.taskList, context.taskName, catchThen), context);
 }
 
 /**

@@ -39,8 +39,11 @@ The npm [`@openworkflowspec/sdk`](https://www.npmjs.com/package/@openworkflowspe
 
 |                              Latest Releases                              |                      Conformance to Spec Version                       |
 | :-----------------------------------------------------------------------: | :--------------------------------------------------------------------: |
+| [v1.1.\*](https://github.com/open-workflow-specification/sdk-typescript/releases/) | [v1.1.\*](https://github.com/open-workflow-specification/specification/tree/v1.1.0) |
 | [v1.0.\*](https://github.com/open-workflow-specification/sdk-typescript/releases/) |     [v1.0.\*](https://github.com/open-workflow-specification/specification)      |
 | [v0.8.4](https://github.com/open-workflow-specification/sdk-typescript/releases/)  | [v0.8](https://github.com/open-workflow-specification/specification/tree/0.8.x) |
+
+Upgrading from `1.0.x`? See the [migration guide](./MIGRATION.md).
 
 The repository is currently developed and validated on Node.js `22+`.
 
@@ -114,7 +117,7 @@ import { Classes } from '@openworkflowspec/sdk';
 // const text = await fetch('https://myserver.com/my-workflow-definition.json');
 const text = `
 document:
-  dsl: 1.0.3
+  dsl: 1.1.0
   name: test
   version: 1.0.0
   namespace: default
@@ -145,7 +148,7 @@ import { Classes, Specification, validate } from '@openworkflowspec/sdk';
 // Simply cast an object:
 const workflow = {
   document: {
-    dsl: '1.0.3',
+    dsl: '1.1.0',
     name: 'test',
     version: '1.0.0',
     namespace: 'default',
@@ -181,7 +184,7 @@ import { Classes, validate } from '@openworkflowspec/sdk';
 // Simply use the constructor
 const workflow = new Classes.Workflow({
   document: {
-    dsl: '1.0.3',
+    dsl: '1.1.0',
     name: 'test',
     version: '1.0.0',
     namespace: 'default',
@@ -224,7 +227,7 @@ You can use the fluent API to build a validated and normalized workflow definiti
 import { documentBuilder, setTaskBuilder, taskListBuilder, workflowBuilder } from '@openworkflowspec/sdk';
 
 const workflow = workflowBuilder(/*workflowObject*/)
-  .document(documentBuilder().dsl('1.0.3').name('test').version('1.0.0').namespace('default').build())
+  .document(documentBuilder().dsl('1.1.0').name('test').version('1.0.0').namespace('default').build())
   .do(
     taskListBuilder()
       .push({
@@ -322,7 +325,7 @@ import { buildGraph } from '@openworkflowspec/sdk';
 
 const workflow = {
   document: {
-    dsl: '1.0.3',
+    dsl: '1.1.0',
     name: 'using-plain-object',
     version: '1.0.0',
     namespace: 'default',
@@ -409,7 +412,7 @@ import { convertToMermaidCode, MermaidDiagram } from '@openworkflowspec/sdk';
 
 const workflow = {
   document: {
-    dsl: '1.0.3',
+    dsl: '1.1.0',
     name: 'using-plain-object',
     version: '1.0.0',
     namespace: 'default',

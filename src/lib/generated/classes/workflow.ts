@@ -27,6 +27,7 @@ import { _TaskList } from './task-list';
 import { _WorkflowTimeout } from './workflow-timeout';
 import { _Output } from './output';
 import { _Schedule } from './schedule';
+import { _Evaluate } from './evaluate';
 import { ObjectHydrator } from '../../hydrator';
 import { Specification } from '../definitions';
 import { getLifecycleHooks } from '../../lifecycle-hooks';
@@ -76,6 +77,7 @@ export class Workflow extends ObjectHydrator<Specification.Workflow> {
       if (typeof model.timeout === 'object') self.timeout = new _WorkflowTimeout(model.timeout);
       if (typeof model.output === 'object') self.output = new _Output(model.output);
       if (typeof model.schedule === 'object') self.schedule = new _Schedule(model.schedule);
+      if (typeof model.evaluate === 'object') self.evaluate = new _Evaluate(model.evaluate);
     }
     getLifecycleHooks('Workflow')?.constructor?.(this);
   }

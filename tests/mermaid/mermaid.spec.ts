@@ -6,7 +6,7 @@ describe('Workflow to MermaidJS Flowchart', () => {
   it('should build a Mermaid diagram for a workflow with a Set task, using the convertToMermaidCode function', () => {
     const workflow = Classes.Workflow.deserialize(`
 document:
-  dsl: '1.0.3'
+  dsl: '1.1.0'
   namespace: test
   name: set
   version: '0.1.0'
@@ -31,7 +31,7 @@ classDef hidden width: 1px, height: 1px;`.trim(),
   it('should build a Mermaid diagram for a workflow with a Set task, using the instance method', () => {
     const workflow = Classes.Workflow.deserialize(`
 document:
-  dsl: '1.0.3'
+  dsl: '1.1.0'
   namespace: test
   name: set
   version: '0.1.0'
@@ -56,7 +56,7 @@ classDef hidden width: 1px, height: 1px;`.trim(),
   it('should build a Mermaid diagram for a workflow with a Set task, using the static method', () => {
     const workflow = {
       document: {
-        dsl: '1.0.3',
+        dsl: '1.1.0',
         name: 'set',
         version: '1.0.0',
         namespace: 'test',
@@ -88,7 +88,7 @@ classDef hidden width: 1px, height: 1px;`.trim(),
   it('should build a Mermaid diagram for a workflow with a Set task, using the legacy MermaidDiagram class', () => {
     const workflow = Classes.Workflow.deserialize(`
 document:
-  dsl: '1.0.3'
+  dsl: '1.1.0'
   namespace: test
   name: set
   version: '0.1.0'
@@ -113,7 +113,7 @@ classDef hidden width: 1px, height: 1px;`.trim(),
   it('should build a Mermaid diagram with an alternative, labelled, edge', () => {
     const workflow = Classes.Workflow.deserialize(`
 document:
-  dsl: '1.0.3'
+  dsl: '1.1.0'
   namespace: test
   name: set
   version: '0.1.0'
@@ -140,7 +140,7 @@ classDef hidden width: 1px, height: 1px;`.trim(),
   it('should build a Mermaid diagram for a workflow with a For task', () => {
     const workflow = Classes.Workflow.deserialize(`
 document:
-  dsl: '1.0.3'
+  dsl: '1.1.0'
   namespace: test
   name: for-example
   version: '0.1.0'
@@ -181,7 +181,7 @@ classDef hidden width: 1px, height: 1px;`.trim(),
   it('should keep the diagram valid when task names contain Mermaid-significant characters', () => {
     const workflow = {
       document: {
-        dsl: '1.0.3',
+        dsl: '1.1.0',
         name: 'special-characters',
         version: '1.0.0',
         namespace: 'test',

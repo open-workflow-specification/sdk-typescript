@@ -39,8 +39,11 @@ The npm [`@openworkflowspec/sdk`](https://www.npmjs.com/package/@openworkflowspe
 
 |                              Latest Releases                              |                      Conformance to Spec Version                       |
 | :-----------------------------------------------------------------------: | :--------------------------------------------------------------------: |
+| [v1.1.\*](https://github.com/open-workflow-specification/sdk-typescript/releases/) | [v1.1.\*](https://github.com/open-workflow-specification/specification/tree/v1.1.0) |
 | [v1.0.\*](https://github.com/open-workflow-specification/sdk-typescript/releases/) |     [v1.0.\*](https://github.com/open-workflow-specification/specification)      |
 | [v0.8.4](https://github.com/open-workflow-specification/sdk-typescript/releases/)  | [v0.8](https://github.com/open-workflow-specification/specification/tree/0.8.x) |
+
+Upgrading from `1.0.x`? See the [migration guide](./MIGRATION.md).
 
 The repository is currently developed and validated on Node.js `22+`.
 

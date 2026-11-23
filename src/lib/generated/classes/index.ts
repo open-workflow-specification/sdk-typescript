@@ -67,6 +67,7 @@ import { _ErrorFilter } from './error-filter';
 import { _ErrorInstance } from './error-instance';
 import { _ErrorTitle } from './error-title';
 import { _ErrorType } from './error-type';
+import { _Evaluate } from './evaluate';
 import { _EventConsumptionStrategy } from './event-consumption-strategy';
 import { _EventData } from './event-data';
 import { _EventDataschema } from './event-dataschema';
@@ -82,6 +83,8 @@ import { _ExtensionItem } from './extension-item';
 import { _ExternalResource } from './external-resource';
 import { _ExternalScript } from './external-script';
 import { _FlowDirective } from './flow-directive';
+import { _ForIn } from './for-in';
+import { _ForInInlineArray } from './for-in-inline-array';
 import { _ForkTask } from './fork-task';
 import { _ForkTaskConfiguration } from './fork-task-configuration';
 import { _ForTask } from './for-task';
@@ -240,6 +243,7 @@ export const Classes = {
   ErrorInstance: _ErrorInstance,
   ErrorTitle: _ErrorTitle,
   ErrorType: _ErrorType,
+  Evaluate: _Evaluate,
   EventConsumptionStrategy: _EventConsumptionStrategy,
   EventData: _EventData,
   EventDataschema: _EventDataschema,
@@ -255,6 +259,8 @@ export const Classes = {
   ExternalResource: _ExternalResource,
   ExternalScript: _ExternalScript,
   FlowDirective: _FlowDirective,
+  ForIn: _ForIn,
+  ForInInlineArray: _ForInInlineArray,
   ForkTask: _ForkTask,
   ForkTaskConfiguration: _ForkTaskConfiguration,
   ForTask: _ForTask,

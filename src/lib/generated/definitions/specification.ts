@@ -288,7 +288,7 @@ export type EmitTask = TaskBase & {
   [k: string]: unknown;
 };
 /**
- * Identifies the context in which an event happened.
+ * Identifies the context in which an event happened. If not explicitly provided, runtime implementations generate it at emission time (e.g., from the workflow identity). If explicitly provided by the workflow author, the supplied value takes precedence.
  */
 export type EventSource = UriTemplate | RuntimeExpression;
 /**
@@ -319,6 +319,16 @@ export type ForTask = TaskBase & {
   do?: TaskList;
   [k: string]: unknown;
 };
+/**
+ * A runtime expression or an inline array used to get the collection to enumerate.
+ */
+export type ForIn = string | ForInInlineArray;
+/**
+ * An inline array to enumerate.
+ */
+export type ForInInlineArray = {
+  [k: string]: unknown;
+}[];
 /**
  * Provides a mechanism for workflows to await and react to external events, enabling event-driven behavior within workflow systems.
  */
@@ -375,7 +385,7 @@ export type ContainerArguments = string[];
  */
 export type Script = InlineScript | ExternalScript;
 /**
- * A list of the arguments, if any, to the shell command as argv
+ * A list of the arguments, if any, of the shell command to run.
  */
 export type ShellArguments = string[];
 /**
@@ -441,7 +451,7 @@ export type UseSecrets = string[];
 export type WorkflowTimeout = Timeout | string;
 
 /**
- * Open Workflow Specification DSL - Workflow Schema.
+ * Open Workflow DSL - Workflow Schema.
  */
 export interface Workflow {
   document: Document;
@@ -451,6 +461,7 @@ export interface Workflow {
   timeout?: WorkflowTimeout;
   output?: Output;
   schedule?: Schedule;
+  evaluate?: Evaluate;
   [k: string]: unknown;
 }
 /**
@@ -619,11 +630,11 @@ export interface OAuth2AuthenticationPolicy {
  * Inline configuration of the OAuth2 authentication policy.
  */
 export interface OAuth2AuthenticationData {
-  authority?: UriTemplate;
+  authority: UriTemplate;
   /**
    * The grant type to use.
    */
-  grant?:
+  grant:
     | 'authorization_code'
     | 'client_credentials'
     | 'password'
@@ -716,11 +727,11 @@ export interface OpenIdConnectAuthenticationPolicy {
  * Inline configuration of the OAuth2 authentication policy.
  */
 export interface OpenIdConnectAuthenticationProperties {
-  authority?: UriTemplate;
+  authority: UriTemplate;
   /**
    * The grant type to use.
    */
-  grant?:
+  grant:
     | 'authorization_code'
     | 'client_credentials'
     | 'password'
@@ -1022,7 +1033,7 @@ export interface McpClient {
   /**
    * The version of the client used to connect to the MCP server.
    */
-  description?: string;
+  version: string;
   [k: string]: unknown;
 }
 /**
@@ -1062,7 +1073,7 @@ export interface EmitEventWith {
    * The event's unique identifier.
    */
   id?: string;
-  source: EventSource;
+  source?: EventSource;
   /**
    * This attribute contains a value describing the type of event related to the originating occurrence.
    */
@@ -1088,10 +1099,7 @@ export interface ForTaskConfiguration {
    * The name of the variable used to store the current item being enumerated.
    */
   each?: string;
-  /**
-   * A runtime expression used to get the collection to enumerate.
-   */
-  in: string;
+  in: ForIn;
   /**
    * The name of the variable used to store the index of the current item being enumerated.
    */
@@ -1297,6 +1305,10 @@ export interface Shell {
    */
   stdin?: string;
   arguments?: ShellArguments;
+  /**
+   * The working directory, if any, in which to run the shell command.
+   */
+  directory?: string;
   environment?: ShellEnvironment;
 }
 /**
@@ -1369,6 +1381,7 @@ export interface TryTaskCatch {
   exceptWhen?: string;
   retry?: TryTaskCatchRetry;
   do?: TaskList;
+  then?: FlowDirective;
 }
 /**
  * static error filter
@@ -1400,7 +1413,7 @@ export interface ErrorFilter {
   /**
    * if present, means this value should be used for filtering
    */
-  details?: string;
+  detail?: string;
   [k: string]: unknown;
 }
 /**
@@ -1509,4 +1522,21 @@ export interface Schedule {
   cron?: string;
   after?: Duration;
   on?: EventConsumptionStrategy;
+  /**
+   * Specifies how consumed events are read when the workflow is triggered by events. Supported values are 'data' (reads the event's data), 'envelope' (reads the event's envelope, including context attributes), and 'raw' (reads the event's raw data). Defaults to 'data'.
+   */
+  read?: 'data' | 'envelope' | 'raw';
+}
+/**
+ * Configures the workflow's runtime expression evaluation.
+ */
+export interface Evaluate {
+  /**
+   * The language used for writing runtime expressions. Defaults to 'jq'.
+   */
+  language?: string;
+  /**
+   * The runtime expression evaluation mode. Defaults to 'strict'.
+   */
+  mode?: 'strict' | 'loose';
 }

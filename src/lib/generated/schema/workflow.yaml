@@ -1,6 +1,6 @@
-$id: https://open-workflow-specification.org/schemas/1.0.3/workflow.yaml
+$id: https://open-workflow-specification.org/schemas/1.1.0/workflow.yaml
 $schema: https://json-schema.org/draft/2020-12/schema
-description: Open Workflow Specification DSL - Workflow Schema.
+description: Open Workflow DSL - Workflow Schema.
 type: object
 required:
   - document
@@ -164,6 +164,41 @@ properties:
         $ref: '#/$defs/eventConsumptionStrategy'
         title: ScheduleOn
         description: Specifies the events that trigger the workflow execution.
+      read:
+        type: string
+        enum:
+          - data
+          - envelope
+          - raw
+        default: data
+        title: ScheduleOnReadAs
+        description: >-
+          Specifies how consumed events are read when the workflow is triggered
+          by events. Supported values are 'data' (reads the event's data),
+          'envelope' (reads the event's envelope, including context attributes),
+          and 'raw' (reads the event's raw data). Defaults to 'data'.
+    dependentRequired:
+      read:
+        - 'on'
+  evaluate:
+    type: object
+    title: Evaluate
+    description: Configures the workflow's runtime expression evaluation.
+    unevaluatedProperties: false
+    properties:
+      language:
+        type: string
+        default: jq
+        title: EvaluateLanguage
+        description: The language used for writing runtime expressions. Defaults to 'jq'.
+      mode:
+        type: string
+        enum:
+          - strict
+          - loose
+        default: strict
+        title: EvaluateMode
+        description: The runtime expression evaluation mode. Defaults to 'strict'.
 $defs:
   taskList:
     title: TaskList
@@ -701,7 +736,7 @@ $defs:
                         description: >-
                           The name of the client used to connect to the MCP
                           server.
-                      description:
+                      version:
                         type: string
                         title: McpClientVersion
                         description: >-
@@ -815,7 +850,6 @@ $defs:
                     title: EmitEventWith
                     description: Defines the properties of event to emit.
                     required:
-                      - source
                       - type
                 additionalProperties: true
             required:
@@ -849,9 +883,21 @@ $defs:
                   enumerated.
                 default: item
               in:
-                type: string
                 title: ForIn
-                description: A runtime expression used to get the collection to enumerate.
+                description: >-
+                  A runtime expression or an inline array used to get the
+                  collection to enumerate.
+                oneOf:
+                  - type: string
+                    title: ForInExpression
+                    description: >-
+                      A runtime expression used to get the collection to
+                      enumerate.
+                  - type: array
+                    title: ForInInlineArray
+                    description: An inline array to enumerate.
+                    items:
+                      description: An item in the inline collection.
               at:
                 type: string
                 title: ForAt
@@ -1064,14 +1110,15 @@ $defs:
                         type: string
                         title: ScriptStdin
                         description: >-
-                          A runtime expression, if any, to the script as
+                          A runtime expression, if any, to pipe to the script as
                           standard input (stdin).
                       arguments:
-                        type: array
+                        type: object
                         title: ScriptArguments
-                        description: A list of the arguments, if any, to the script as argv
-                        items:
-                          type: string
+                        description: >-
+                          A key/value mapping of the arguments, if any, to use
+                          when running the configured script.
+                        additionalProperties: true
                       environment:
                         type: object
                         title: ScriptEnvironment
@@ -1131,10 +1178,16 @@ $defs:
                         type: array
                         title: ShellArguments
                         description: >-
-                          A list of the arguments, if any, to the shell command
-                          as argv
+                          A list of the arguments, if any, of the shell command
+                          to run.
                         items:
                           type: string
+                      directory:
+                        type: string
+                        title: ShellDirectory
+                        description: >-
+                          The working directory, if any, in which to run the
+                          shell command.
                       environment:
                         type: object
                         title: ShellEnvironment
@@ -1313,6 +1366,15 @@ $defs:
                 $ref: '#/$defs/taskList'
                 title: TryTaskCatchDo
                 description: The definition of the task(s) to run when catching an error.
+              then:
+                $ref: '#/$defs/flowDirective'
+                title: TryTaskCatchThen
+                description: >-
+                  The flow directive to execute for the error path after the
+                  error has been caught (and after executing any `do` tasks, if
+                  set). When set, this determines the next transition instead of
+                  the try task's top-level `then` or the default sequential
+                  flow.
   waitTask:
     type: object
     title: WaitTask
@@ -1531,6 +1593,9 @@ $defs:
     type: object
     title: OAuth2AuthenticationData
     description: Inline configuration of the OAuth2 authentication policy.
+    required:
+      - authority
+      - grant
     properties:
       authority:
         $ref: '#/$defs/uriTemplate'
@@ -1753,7 +1818,7 @@ $defs:
       title:
         type: string
         description: if present, means this value should be used for filtering
-      details:
+      detail:
         type: string
         description: if present, means this value should be used for filtering
   uriTemplate:
@@ -1762,11 +1827,11 @@ $defs:
       - title: LiteralUriTemplate
         type: string
         format: uri-template
-        pattern: ^[A-Za-z][A-Za-z0-9+\-.]*://.*
+        pattern: ^(?!\s*\$\{)(?=\S)(?=.*\{[^}]+\})(([^:/?#]+):)?(//([^/?#\s]*))?([^?#\s]*)(\?([^#\s]*))?(#(\S*))?$
       - title: LiteralUri
         type: string
-        format: uri
-        pattern: ^[A-Za-z][A-Za-z0-9+\-.]*://.*
+        format: uri-reference
+        pattern: ^(?!\s*\$\{)(?=\S)(?!.*[{}])(([^:/?#]+):)?(//([^/?#\s]*))?([^?#\s]*)(\?([^#\s]*))?(#(\S*))?$
   endpoint:
     title: Endpoint
     description: Represents an endpoint.
@@ -1804,7 +1869,11 @@ $defs:
         description: The event's unique identifier.
       source:
         title: EventSource
-        description: Identifies the context in which an event happened.
+        description: >-
+          Identifies the context in which an event happened. If not explicitly
+          provided, runtime implementations generate it at emission time (e.g.,
+          from the workflow identity). If explicitly provided by the workflow
+          author, the supplied value takes precedence.
         oneOf:
           - $ref: '#/$defs/uriTemplate'
           - $ref: '#/$defs/runtimeExpression'

@@ -15,7 +15,7 @@ import {
   WaitTask,
   Workflow,
 } from './generated/definitions/specification';
-import { appendJsonPointerSegment } from './utils';
+import { appendJsonPointerSegment, isObject } from './utils';
 
 const entrySuffix = '-entry-node';
 const exitSuffix = '-exit-node';
@@ -27,6 +27,8 @@ const doReference = '/do';
 const catchReference = '/catch';
 const branchReference = '/fork/branches';
 const tryReference = '/try';
+const foreachTaskListPath = ['foreach', 'do'];
+const subscriptionTaskListPath = ['with', 'subscription', 'foreach', 'do'];
 
 /**
  * Enumeration of possible node types in a graph.
@@ -487,11 +489,58 @@ function buildGenericTaskNode(task: Task, type: GraphNodeType, context: TaskCont
  * Builds a graph node for the provided call task
  * @param task The task to build the graph node for
  * @param context The context to build the graph node for
- * @returns A graph node for the provided task
+ * @returns A graph node for the provided task, or a graph when it holds a nested task list
  */
-function buildCallTaskNode(task: CallTask, context: TaskContext): GraphNode {
-  const node = buildGenericTaskNode(task, GraphNodeType.Call, context);
-  return node;
+function buildCallTaskNode(task: CallTask, context: TaskContext): GraphNode | Graph {
+  // Only an AsyncAPI call's `with` has a schema: a function call's `with` is free-form arguments,
+  // which may happen to contain the same keys.
+  if (task.call !== 'asyncapi') return buildGenericTaskNode(task, GraphNodeType.Call, context);
+  return buildNestedTaskListNode(task, GraphNodeType.Call, subscriptionTaskListPath, context);
+}
+
+/**
+ * Gets the value at the provided path within a task
+ * @param task The task to read
+ * @param path The property names leading to the value
+ * @returns The value, or undefined if any property along the path is missing
+ */
+function getTaskValue(task: Task, path: string[]): unknown {
+  return path.reduce<unknown>(
+    (value, key) => (isObject(value) ? (value as Record<string, unknown>)[key] : undefined),
+    task,
+  );
+}
+
+/**
+ * Builds a graph for a task holding a task list below its own properties (e.g. `foreach.do`),
+ * or a plain node when that list is missing or empty
+ * @param task The task to build the graph for
+ * @param type The type of the node
+ * @param taskListPath The property names leading from the task to its task list
+ * @param context The context to build the graph for
+ * @returns A graph containing the nested tasks, or a node when there are none
+ */
+function buildNestedTaskListNode(
+  task: Task,
+  type: GraphNodeType,
+  taskListPath: string[],
+  context: TaskContext,
+): GraphNode | Graph {
+  const taskList = getTaskValue(task, taskListPath);
+  if (!Array.isArray(taskList) || !taskList.length) return buildGenericTaskNode(task, type, context);
+  const subgraph: Graph = initGraph(type, context.taskId, task, context.taskName, context.graph, context.taskReference);
+  const nestedContext: TaskContext = {
+    ...context,
+    graph: subgraph,
+    taskListId: taskListPath.reduce(appendJsonPointerSegment, context.taskId),
+    taskListReference: taskListPath.reduce(appendJsonPointerSegment, context.taskReference),
+    taskList: mapTasks(taskList as TaskItem[]),
+    taskName: undefined,
+  };
+  if (!subgraph.entryNode) throw new Error(`Missing 'entryNode' on graph id '${subgraph.id}'`);
+  buildTransitions(subgraph.entryNode, nestedContext);
+  buildTransitions(subgraph, context);
+  return subgraph;
 }
 
 /**
@@ -616,11 +665,10 @@ function buildForkTaskNode(task: ForkTask, context: TaskContext): Graph {
  * Builds a graph node for the provided listen task
  * @param task The task to build the graph node for
  * @param context The context to build the graph node for
- * @returns A graph node for the provided task
+ * @returns A graph node for the provided task, or a graph when it holds a nested task list
  */
-function buildListenTaskNode(task: ListenTask, context: TaskContext): GraphNode {
-  const node = buildGenericTaskNode(task, GraphNodeType.Listen, context);
-  return node;
+function buildListenTaskNode(task: ListenTask, context: TaskContext): GraphNode | Graph {
+  return buildNestedTaskListNode(task, GraphNodeType.Listen, foreachTaskListPath, context);
 }
 
 /**

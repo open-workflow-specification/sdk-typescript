@@ -1,4 +1,5 @@
-import { buildFlatGraph, buildGraph, Graph, GraphNodeType } from '../../src/lib/graph-builder';
+import { buildFlatGraph, buildGraph, getNodeAtPointer, Graph, GraphNodeType } from '../../src/lib/graph-builder';
+import { convertToMermaidCode } from '../../src/lib/mermaid-converter';
 import { Task, Workflow } from '../../src/lib/generated/definitions/specification';
 
 const document = {
@@ -93,6 +94,23 @@ describe('Tasks holding a nested task list', () => {
       .filter((node) => node.id.startsWith('/do/consume/foreach/do/'))
       .map((node) => node.parentId);
     expect(parentIds).toEqual(['/do/consume', '/do/consume']);
+  });
+
+  it('finds nested tasks with getNodeAtPointer', () => {
+    const graph = buildGraph({ document, do: [{ consume: listenTask(iterator) }] });
+    expect(getNodeAtPointer(graph, '/do/0/consume/foreach/do/0/first')?.id).toBe('/do/consume/foreach/do/first');
+  });
+
+  it('builds nested ids under a custom task id', () => {
+    const flat = buildFlatGraph({ document, do: [{ consume: listenTask(iterator) }] }, false, {
+      taskId: ({ reference }) => (reference === '/do/0/consume' ? 'n1' : undefined),
+    });
+    expect(flat.nodes.map((n) => n.id)).toContain('n1/foreach/do/first');
+  });
+
+  it('renders the nested tasks as a Mermaid subgraph', () => {
+    const code = convertToMermaidCode({ document, do: [{ consume: listenTask(iterator) }] });
+    expect(code).toContain('subgraph n2 ["consume"]');
   });
 
   it.each([

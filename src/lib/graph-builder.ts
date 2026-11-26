@@ -492,8 +492,8 @@ function buildGenericTaskNode(task: Task, type: GraphNodeType, context: TaskCont
  * @returns A graph node for the provided task, or a graph when it holds a nested task list
  */
 function buildCallTaskNode(task: CallTask, context: TaskContext): GraphNode | Graph {
-  // Only an AsyncAPI call's `with` has a schema: a function call's `with` is free-form arguments,
-  // which may happen to contain the same keys.
+  // Only an AsyncAPI call's `with` can hold `subscription.foreach`; a function call's `with`
+  // is free-form and may contain the same keys.
   if (task.call !== 'asyncapi') return buildGenericTaskNode(task, GraphNodeType.Call, context);
   return buildNestedTaskListNode(task, GraphNodeType.Call, subscriptionTaskListPath, context);
 }
